@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แนวข้อสอบ English for Communication 2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink-bg: #fff0f6;
+            --pink-card: #ffb8d2;
+            --pink-btn: #ff7eb3;
+            --pink-btn-hover: #ff529a;
+            --text-dark: #4a4a4a;
+            --danger: #ff4d4f;
+            --success: #4CAF50;
+            --warning: #ff9800;
+        }
+
+        body { font-family: 'Kanit', sans-serif; background-color: var(--pink-bg); color: var(--text-dark); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { max-width: 900px; width: 100%; position: relative; }
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 20px; }
+        
+        .card { background-color: var(--pink-card); border-radius: 20px; padding: 20px 30px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        button { font-family: 'Kanit', sans-serif; cursor: pointer; border: none; transition: 0.3s; }
+        .btn-main { background-color: var(--pink-btn); color: white; padding: 15px 30px; border-radius: 30px; font-size: 1.2rem; width: 100%; margin: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-main:hover { background-color: var(--pink-btn-hover); transform: translateY(-2px); }
+        .btn-hint { background-color: var(--danger); color: white; padding: 10px 20px; border-radius: 20px; font-size: 1rem; }
+        
+        .btn-nav { background-color: #bdf2bd; color: #333; padding: 10px 30px; border-radius: 20px; font-weight: bold; font-size: 1.2rem; }
+        .btn-nav.submit { background-color: var(--warning); color: white; }
+
+        .quiz-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .options-list { list-style: none; padding: 0; }
+        .options-list li { background: white; margin: 10px 0; padding: 10px 20px; border-radius: 10px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .options-list li:hover { border-color: var(--pink-btn); }
+        .options-list li.correct { background-color: var(--success) !important; color: white !important; border-color: var(--success) !important; }
+        .options-list li.incorrect { background-color: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
+        .options-list.disabled li { pointer-events: none; }
+
+        .logic-box { background-color: var(--pink-card); padding: 20px; border-radius: 20px; text-align: center; height: fit-content; }
+        .score-display { display: flex; justify-content: flex-end; align-items: center; font-size: 1.2rem; font-weight: bold; color: var(--pink-btn-hover); margin-bottom: 10px; gap: 15px; }
+
+        /* Menu Selector (Quiz & Vocab) */
+        .q-btn { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--pink-btn); background: white; color: var(--text-dark); font-weight: bold; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+        .q-btn:hover { background: var(--pink-bg); }
+        .q-btn.answered-correct { background: var(--success); color: white; border-color: var(--success); }
+        .q-btn.answered-incorrect { background: var(--danger); color: white; border-color: var(--danger); }
+        .q-btn.active { box-shadow: 0 0 0 4px rgba(255, 126, 179, 0.4); }
+
+        .expl-list { margin-top: 10px; padding-left: 20px; text-align: left; font-size: 0.95rem; }
+        .expl-list li { margin-bottom: 8px; line-height: 1.5; }
+
+        /* Drag & Drop & Click Layout */
+        .dnd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; }
+        .draggable-item { background-color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 10px; cursor: pointer; border: 2px dashed var(--pink-btn); transition: background 0.3s, color 0.3s, transform 0.1s, border 0.3s; user-select: none; }
+        .draggable-item.selected-item { border: 3px solid var(--warning) !important; background-color: #fff9e6 !important; transform: scale(1.05); }
+        
+        .drop-zone { background-color: var(--pink-card); padding: 15px; border-radius: 15px; min-height: 25px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; border: 2px dashed transparent; cursor: pointer; transition: background 0.3s; }
+        .drop-zone.hovered { border-color: white; background-color: #ff8fb9; }
+        
+        .word-label { width: 160px; font-weight: bold; }
+        .footer { text-align: right; margin-top: 50px; font-size: 0.9rem; color: #666; }
+
+        #passage-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; max-width: 800px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-close { position: absolute; top: 15px; right: 15px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+        .passage-text p { line-height: 1.6; margin-bottom: 15px; font-size: 1.05rem; }
+
+        /* Survey Box */
+        .survey-box { background: white; border: 3px dashed var(--pink-btn); border-radius: 15px; padding: 25px; margin-top: 30px; text-align: center; }
+        .survey-btn { display: inline-block; background-color: var(--pink-btn); color: white; padding: 12px 30px; border-radius: 30px; font-size: 1.2rem; text-decoration: none; font-weight: bold; transition: 0.3s; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .survey-btn:hover { background-color: var(--pink-btn-hover); transform: translateY(-2px); }
+
+        /* การปรับแต่งสำหรับมือถือโดยเฉพาะ */
+        @media (max-width: 768px) { 
+            .quiz-grid { grid-template-columns: 1fr; } 
+            
+            /* ปรับหน้าศัพท์ให้เป็น 2 ฝั่งในมือถือ */
+            .dnd-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; } 
+            .draggable-item { padding: 8px; font-size: 0.85rem; margin-bottom: 8px; }
+            .drop-zone { padding: 8px; min-height: 35px; margin-bottom: 8px; font-size: 0.85rem; }
+            .word-label { width: auto !important; margin-right: 10px; font-size: 0.85rem; word-wrap: break-word; }
+            h3.text-center { font-size: 1.1rem; }
+            .dnd-grid > div:nth-child(2) > div { flex-direction: column !important; align-items: flex-start !important; }
+            .dnd-grid > div:nth-child(2) > div .drop-zone { width: 100%; margin-top: 5px; box-sizing: border-box; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="page-home">
+        <div class="card text-center" style="background-color: var(--pink-card);">
+            <h1>แนวข้อสอบปลายภาค English for Communication 2</h1>
+            <h3 style="color: var(--text-dark); margin-bottom: 5px; font-weight: 600;">รายวิชา 0000152 ภาษาอังกฤษเพื่อการสื่อสาร 2</h3>
+            <p style="font-size: 1.1rem; background: white; display: inline-block; padding: 5px 20px; border-radius: 20px; color: var(--pink-btn-hover); font-weight: bold; margin-top: 10px; border: 2px solid white;">
+                📅 วันที่สอบ: 2 มีนาคม 2569 | ⏰ เวลา: 9.00 - 12.00 น.
+            </p>
+            <hr style="border-top: 2px dashed white; margin: 25px 0;">
+            <h3 style="margin-top: 0;">ข้อสอบมีทั้งหมด 60 ข้อ</h3>
+            <p style="font-size: 1.05rem;">- 40 จากที่เรียนในห้อง<br>- 20 จากใน tsu mooc for all</p>
+        </div>
+        
+        <button class="btn-main" onclick="startQuiz()">
+            แบบทดสอบจำลอง (Mock Exam) 40 ข้อ<br>
+            <span style="font-size: 0.9rem; font-weight: 300;">(ใกล้เคียงข้อสอบจริง เพื่อใช้ฝึกทำข้อสอบและทบทวนเนื้อหาก่อนสอบ)</span>
+        </button>
+        
+        <button class="btn-main" onclick="startVocab()">
+           แบบฝึกหัดทบทวนคำศัพท์ (Vocabulary Practice)<br>
+            <span style="font-size: 0.9rem; font-weight: 300;">(ใช้จริงในข้อสอบ)</span>
+        </button>
+
+        <div class="survey-box" style="margin-top: 20px;">
+            <h3 style="margin-top: 0; color: var(--pink-btn-hover);">✨ ถ้าอยากให้มีเว็บแบบนี้เกิดขึ้นอีก ✨</h3>
+            <p style="font-size: 1.1rem; margin-bottom: 5px;">ช่วยทำแบบประเมินเป็นกำลังใจให้คนทำเว็บหน่อยนะครับ</p>
+            <a href="https://forms.gle/twTee4Ya7scp9NGa6" target="_blank" class="survey-btn">📝 ทำแบบประเมินคลิกที่นี่</a>
+        </div>
+        
+        <div class="footer">จัดทำโดยนิสิตคนนึงจากวิดวะน้าผิดไรขอโทษด้วย</div>
+    </div>
+
+    <div id="page-quiz" class="hidden">
+        <div class="score-display">
+            <div>คะแนน: <span id="current-score">0</span> / <span id="total-questions">0</span></div>
+            <button class="btn-nav" style="padding: 5px 20px; font-size: 1rem; background: white; border: 2px solid var(--pink-btn);" onclick="toggleQuestionMenu()">📌 เลือกข้อ</button>
+        </div>
+
+        <div id="question-menu" class="hidden" style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+            <h4 style="margin-top:0;">เลือกข้อที่ต้องการทำ</h4>
+            <div id="q-grid" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+        </div>
+
+        <h2 class="text-center">แบบทดสอบจำลอง (Mock Exam)</h2>
+        
+        <div class="quiz-grid">
+            <div>
+                <div id="passage-btn-container" class="hidden" style="margin-bottom: 15px;">
+                    <button class="btn-nav" style="background: #fff0f6; border: 2px solid var(--pink-btn); color: var(--pink-btn-hover); padding: 8px 20px; font-size: 1.1rem; border-radius: 10px; width: 100%; font-weight: bold;" onclick="openPassage()">
+                        📖 คลิกที่นี่เพื่ออ่านเนื้อเรื่อง (Passage)
+                    </button>
+                </div>
+
+                <h3 id="question-text" style="line-height: 1.6;"></h3>
+                <ul class="options-list" id="options-list"></ul>
+                
+                <div id="explanation-box" class="hidden mt-2" style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid var(--pink-btn);">
+                    <strong style="font-size: 1.1rem;">เฉลย:</strong><br><span id="explanation-text" style="display: block; margin-top: 8px; line-height: 1.5;"></span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <button class="btn-nav" onclick="prevQuestion()">&lt;----- กลับ</button>
+                    <button id="btn-next" class="btn-nav" onclick="nextQuestion()">ถัดไป -----&gt;</button>
+                </div>
+                <div class="mt-2 text-center">
+                    <button class="btn-nav" onclick="navTo('page-home')" style="background:#eee; font-size: 1rem; padding: 5px 20px;">กลับหน้าแรก</button>
+                </div>
+            </div>
+
+            <div class="logic-box">
+                <h2 style="margin-top:0;">หลักการคิด</h2>
+                <div id="logic-text" style="margin-bottom: 15px; font-size: 0.95rem; text-align: left;"></div>
+                <div style="text-align: center;">
+                    <button class="btn-hint" onclick="toggleHint()">คำใบ้</button>
+                </div>
+                <div id="hint-box" class="hidden" style="margin-top:15px; background: white; padding: 10px; border-radius: 10px; font-size:0.9rem; text-align: left;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="passage-modal" class="hidden">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closePassage()">X</button>
+            <h2 id="passage-title" style="margin-top: 0; color: var(--pink-btn-hover);"></h2>
+            <div id="passage-content" class="passage-text"></div>
+        </div>
+    </div>
+
+    <div id="page-result" class="hidden text-center">
+        <div class="card">
+            <h1>🎉 ทำข้อสอบเสร็จแล้ว! 🎉</h1>
+            <p style="font-size: 1.5rem; margin: 30px 0;">คุณทำได้: <strong style="color: var(--pink-btn-hover); font-size: 2.5rem;"><span id="final-score">0</span> / <span id="final-total">0</span></strong> คะแนน</p>
+            <button class="btn-main" onclick="navTo('page-home')" style="max-width: 300px;">กลับสู่หน้าแรก</button>
+        </div>
+        
+        <div class="survey-box">
+            <h3 style="margin-top: 0; color: var(--pink-btn-hover);">✨ ถ้าอยากให้มีเว็บแบบนี้เกิดขึ้นอีก ✨</h3>
+            <p style="font-size: 1.1rem; margin-bottom: 5px;">ช่วยทำแบบประเมินเป็นกำลังใจให้คนทำเว็บหน่อยนะครับ</p>
+            <a href="https://forms.gle/twTee4Ya7scp9NGa6" target="_blank" class="survey-btn">📝 ทำแบบประเมินคลิกที่นี่</a>
+        </div>
+    </div>
+
+    <div id="page-vocab" class="hidden">
+        
+        <div class="score-display">
+            <button class="btn-nav" style="padding: 5px 20px; font-size: 1rem; background: white; border: 2px solid var(--pink-btn);" onclick="toggleVocabMenu()">📌 เลือกหน้าคำศัพท์</button>
+        </div>
+
+        <div id="vocab-menu" class="hidden" style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+            <h4 style="margin-top:0;">เลือกหน้าคำศัพท์ (1-6)</h4>
+            <div id="v-grid" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+        </div>
+
+        <h2 class="text-center">แบบฝึกหัดทบทวนคำศัพท์ (Vocabulary Practice)</h2>
+        <p class="text-center" style="margin-bottom:5px;">แบ่งเป็นหน้าละ 5 คำ (ทั้งหมด 30 คำ)</p>
+        <p class="text-center" style="font-size: 0.9rem; color: var(--pink-btn-hover); font-weight: bold; margin-top:0;">💡 วิธีเล่น: แตะที่ความหมาย 1 ครั้ง แล้วไปแตะที่กล่องคำศัพท์ (หรือลากวางก็ได้)</p>
+
+        <div class="dnd-grid">
+            <div><h3 class="text-center">ความหมาย</h3><div id="meanings-container"></div></div>
+            <div><h3 class="text-center">คำศัพท์</h3><div id="vocab-container"></div></div>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; margin-top: 40px;">
+            <button class="btn-nav" onclick="prevVocabPage()">&lt;----- กลับ</button>
+            <button class="btn-nav" onclick="navTo('page-home')" style="background:#eee; padding: 5px 20px;">หน้าแรก</button>
+            <button class="btn-nav" onclick="nextVocabPage()">ถัดไป -----&gt;</button>
+        </div>
+
+        <div id="vocab-survey" class="survey-box hidden">
+            <h3 style="margin-top: 0; color: var(--pink-btn-hover);">✨ ฝึกคำศัพท์ครบแล้ว! ถ้าอยากให้มีเว็บแบบนี้อีก ✨</h3>
+            <p style="font-size: 1.1rem; margin-bottom: 5px;">ช่วยทำแบบประเมินเป็นกำลังใจให้คนทำเว็บหน่อยนะครับ</p>
+            <a href="https://forms.gle/twTee4Ya7scp9NGa6" target="_blank" class="survey-btn">📝 ทำแบบประเมินคลิกที่นี่</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function navTo(pageId) {
+        document.querySelectorAll('.container > div').forEach(el => el.classList.add('hidden'));
+        document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    const passagesData = {
+        1: `<p>The students in Class B had been preparing for a science field trip for weeks, and everyone was looking forward to it. They planned to visit the Marine Learning Center to study sea animals and coastal ecosystems. Their teacher, Ms. Lina, explained that the visit would help them understand science beyond the classroom.</p><p>However, on the morning of the trip, the sky became cloudy and the wind started to get stronger. Some students asked if the trip could still continue. Ms. Lina said she would check the weather report first. A short while later, she returned and informed the class, "The school director said a storm is approaching the coast. We cannot travel there today."</p><p>The students felt disappointed, but they understood the situation. Ms. Lina gave them permission to stay in the classroom while she arranged an alternative plan. "If I were you," she added, "I'd keep your notebooks ready. We will still learn something useful today."</p><p>Soon after, heavy rain began to fall outside. The students stayed inside as the playground slowly filled with water. Since the outdoor trip was cancelled, Ms. Lina organized indoor learning activities instead. She asked the school staff if the class could use the media room. The staff agreed but reminded her that the students must speak quietly while using the shared space.</p><p>Inside, the class watched an educational video about ocean life and worked together in small groups. Tanya said the video helped her understand marine food chains better. Her friend Ken agreed and mentioned that without the storm, they wouldn't have studied together like this. Ms. Lina walked around the room and gave each group some advice. She encouraged them to share ideas, ask questions, and present their findings. Even though the field trip was postponed, the students still felt motivated and proud of their work.</p><p>In the afternoon, the rain finally stopped. Ms. Lina smiled and said, "We will plan the trip again next month." Although they didn't visit the Marine Learning Center, the students realized they had still learned a lot from the indoor activities.</p>`,
+        2: `<p>In many modern cities, a new lifestyle trend is influencing how people use everyday products. This trend, often called the "sharing economy," encourages people to use shared services instead of owning many personal items. It first became popular in large European cities and has gradually spread to Asia, where young adults are facing higher living expenses. As a result, shared bike stations, co-working spaces, and community libraries have become more common in urban areas.</p><p>Supporters believe that this system is both practical and environmentally friendly. For example, Nida, a 21-year-old university student, explains that she used to buy many items that she rarely used. After joining a campus sharing program, she began borrowing equipment and learning how to maintain simple tools instead of purchasing new ones. She now prefers to repair small devices and borrow specialized items when necessary. She says the program has helped her save money and reduce waste.</p><p>However, some people remain concerned about shared facilities. They worry that shared spaces may become crowded or that borrowed items might be damaged by careless users. To solve these problems, many universities and residential communities have introduced clear rules. Users must check the condition of items before and after use, and they are asked to follow safety instructions when using equipment. In addition, short training videos are provided for tools that require special skills.</p><p>Experts predict that this trend will influence product design in the future. When products are intended for shared use, they need to be more durable and easier to repair. Many manufacturers are already focusing on simpler designs with fewer decorative parts so that products can last longer and be fixed more easily. Some companies are also expanding repair services and maintenance programs instead of only selling new products.</p><p>Even so, the success of shared systems depends largely on user responsibility. If people do not return items on time or fail to take care of them, the system may not function effectively. Nevertheless, many users believe that sharing resources is a smarter and more sustainable way to live in modern cities.</p>`
+    };
+
+    function openPassage() {
+        const q = questions[currentQ];
+        if(q.passage) {
+            document.getElementById('passage-title').innerText = 'Reading Passage ' + q.passage;
+            document.getElementById('passage-content').innerHTML = passagesData[q.passage];
+            document.getElementById('passage-modal').classList.remove('hidden');
+        }
+    }
+    function closePassage() { document.getElementById('passage-modal').classList.add('hidden'); }
+
+    // ตัวแปรสำหรับหลักการคิดเรื่อง If-Clause เพื่อนำไปใช้ซ้ำ
+    const logicConditionals = "<b>โครงสร้าง If-Clause (Conditionals)</b><br><ul style='margin-top:5px; padding-left:15px; font-size:0.9rem;'><li><b>Type 0:</b> If + V.1, S + V.1<br>(ความจริงเสมอ/วิทยาศาสตร์)</li><li><b>Type 1:</b> If + V.1, S + will + V.1<br>(เป็นไปได้ในอนาคต)</li><li><b>Type 2:</b> If + V.2, S + would + V.1<br>(สมมติสิ่งที่ไม่จริงในปัจจุบัน)</li><li><b>Type 3:</b> If + had + V.3, S + would have + V.3<br>(สมมติสิ่งตรงข้ามกับอดีต แก้ไขไม่ได้)</li></ul>";
+
+    const questions = [
+        { text: "1. Regular exercise is highly _____ because it helps people stay healthy and reduce stress.", options: ["beneficial", "portable", "flexible", "innovative"], answer: 0, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 บริบทคือการออกกำลังกายที่ทำให้สุขภาพดี คำตอบต้องมีความหมายเชิงบวก", explanation: "<b>ตอบข้อ 1. beneficial</b><ul class='expl-list'><li><b>การแปล:</b> การออกกำลังกายเป็นประจำนั้น 'มีประโยชน์' อย่างมาก เพราะช่วยให้สุขภาพดี</li><li><b>วิเคราะห์:</b> คำว่า beneficial (มีประโยชน์) สอดคล้องกับเรื่องสุขภาพที่สุด</li><li><b>ตัวเลือกอื่น:</b> portable (พกพาง่าย), flexible (ยืดหยุ่น), innovative (เป็นนวัตกรรม)</li></ul>" },
+        { text: "2. Each group in the design contest presented a/an _____ product that reflected their creativity and original ideas.", options: ["affordable", "portable", "unique", "practical"], answer: 2, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 คีย์เวิร์ดคือ 'creativity' (ความคิดสร้างสรรค์) และ 'original ideas' (ไอเดียที่ไม่เหมือนใคร)", explanation: "<b>ตอบข้อ 3. unique</b><ul class='expl-list'><li><b>คีย์เวิร์ด:</b> creativity (ความคิดสร้างสรรค์) และ original ideas (ไอเดียต้นฉบับ/ไม่ซ้ำใคร)</li><li><b>วิเคราะห์:</b> สินค้าที่สร้างสรรค์และไม่เหมือนใคร ต้องใช้คำว่า 'unique' (มีเอกลักษณ์)</li><li><b>ตัวเลือกอื่น:</b> affordable (ราคาจับต้องได้), portable (พกพาง่าย), practical (ใช้ได้จริง)</li></ul>" },
+        { text: "3. After months of planning, they decided to _____ a small business together.", options: ["set up", "turn off", "give up", "take back"], answer: 0, logic: "ข้อนี้ทดสอบ Phrasal Verbs", hint: "💡 การเริ่มต้นทำธุรกิจหรือก่อตั้งบริษัท ใช้ Phrasal Verb ตัวไหน?", explanation: "<b>ตอบข้อ 1. set up</b><ul class='expl-list'><li><b>การแปล:</b> หลังจากวางแผนมาหลายเดือน พวกเขาตัดสินใจ 'ก่อตั้ง' ธุรกิจเล็กๆ ด้วยกัน</li><li><b>วิเคราะห์:</b> สำนวน set up a business แปลว่า ก่อตั้ง/เริ่มต้นธุรกิจ</li><li><b>ตัวเลือกอื่น:</b> turn off (ปิดเครื่องใช้ไฟฟ้า), give up (ยอมแพ้), take back (ถอนคำพูด/เอาคืน)</li></ul>" },
+        { text: "4. If you experience emotional difficulties, you should consider speaking with a _____.", options: ["optician", "psychologist", "paramedic", "surgeon"], answer: 1, logic: "ข้อนี้ทดสอบคำศัพท์อาชีพ (Jobs)", hint: "💡 คีย์เวิร์ดคือ 'emotional difficulties' (ปัญหาทางอารมณ์/จิตใจ) ต้องปรึกษาใคร?", explanation: "<b>ตอบข้อ 2. psychologist</b><ul class='expl-list'><li><b>คีย์เวิร์ด:</b> emotional difficulties (ปัญหาทางอารมณ์และจิตใจ)</li><li><b>วิเคราะห์:</b> ผู้ที่เชี่ยวชาญด้านจิตใจคือ psychologist (นักจิตวิทยา)</li><li><b>ตัวเลือกอื่น:</b> optician (ช่างแว่นตา), paramedic (เจ้าหน้าที่กู้ชีพ), surgeon (ศัลยแพทย์)</li></ul>" },
+        { text: "5. Even though he encountered several _____, such as financial stress and time pressure, he did not quit the project.", options: ["obstacles", "journeys", "memories", "hobbies"], answer: 0, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 สิ่งที่เป็นปัญหาเช่น ความเครียดเรื่องเงินและเวลา", explanation: "<b>ตอบข้อ 1. obstacles</b><ul class='expl-list'><li><b>คีย์เวิร์ด:</b> financial stress (เครียดเรื่องเงิน) และ time pressure (กดดันเรื่องเวลา)</li><li><b>วิเคราะห์:</b> สิ่งเหล่านี้จัดเป็น 'อุปสรรค' ในการทำงาน ตรงกับคำว่า obstacles</li><li><b>ตัวเลือกอื่น:</b> journeys (การเดินทาง), memories (ความทรงจำ), hobbies (งานอดิเรก)</li></ul>" },
+        { text: "6. He never greets others and often looks down on his classmates. He is so _____.", options: ["thoughtful", "arrogant", "easygoing", "generous"], answer: 1, logic: "ข้อนี้ทดสอบคำศัพท์บุคลิกภาพ (Personality)", hint: "💡 คนที่ไม่ทักทายใครและชอบดูถูกคนอื่น เป็นคนนิสัยอย่างไร?", explanation: "<b>ตอบข้อ 2. arrogant</b><ul class='expl-list'><li><b>คีย์เวิร์ด:</b> never greets (ไม่เคยทักทายใคร) และ looks down on (ดูถูกคนอื่น)</li><li><b>วิเคราะห์:</b> พฤติกรรมนี้แสดงถึงความ 'หยิ่งยโส/จองหอง' ตรงกับคำว่า arrogant</li><li><b>ตัวเลือกอื่น:</b> thoughtful (เอาใจใส่), easygoing (สบายๆ), generous (ใจกว้าง)</li></ul>" },
+        { text: "7. During emergencies, a manager should be _____, making quick and confident decisions without hesitation.", options: ["decisive", "emotional", "insensitive", "talkative"], answer: 0, logic: "ข้อนี้ทดสอบคำศัพท์บุคลิกภาพ (Personality)", hint: "💡 คีย์เวิร์ด 'making quick and confident decisions' (ตัดสินใจรวดเร็วและมั่นใจ)", explanation: "<b>ตอบข้อ 1. decisive</b><ul class='expl-list'><li><b>คีย์เวิร์ด:</b> making quick and confident decisions (ตัดสินใจอย่างรวดเร็วและมั่นใจ)</li><li><b>วิเคราะห์:</b> คนที่มีลักษณะนี้เรียกว่าเป็นคน 'เด็ดขาด' ตรงกับคำว่า decisive</li><li><b>ตัวเลือกอื่น:</b> emotional (ใช้อารมณ์), insensitive (ไร้ความรู้สึก), talkative (ช่างพูด)</li></ul>" },
+        { text: "8. I only met him once at a conference. He's not a close friend, just an _____ I sometimes chat with online.", options: ["neighbor", "relative", "acquaintance", "colleague"], answer: 2, logic: "ข้อนี้ทดสอบคำศัพท์ความสัมพันธ์ (Relationships)", hint: "💡 'not a close friend' (ไม่ใช่เพื่อนสนิท) แค่เคยเจอกันครั้งเดียว", explanation: "<b>ตอบข้อ 3. acquaintance</b><ul class='expl-list'><li><b>คีย์เวิร์ด:</b> not a close friend (ไม่ใช่เพื่อนสนิท) met him once (เคยเจอแค่ครั้งเดียว)</li><li><b>วิเคราะห์:</b> ความสัมพันธ์ระดับนี้คือ 'คนรู้จัก' ตรงกับคำว่า acquaintance</li><li><b>ตัวเลือกอื่น:</b> neighbor (เพื่อนบ้าน), relative (ญาติ), colleague (เพื่อนร่วมงาน)</li></ul>" },
+        { text: "9. I felt bad about my rude comment, so I decided to _____ it the next day and apologize properly.", options: ["get over", "take back", "come across", "pick up"], answer: 1, logic: "ข้อนี้ทดสอบ Phrasal Verbs", hint: "💡 พูดจาไม่ดีไปแล้วรู้สึกแย่ เลยอยากจะ 'ถอนคำพูด' หรือเอาคืนกลับมา", explanation: "<b>ตอบข้อ 2. take back</b><ul class='expl-list'><li><b>บริบท:</b> รู้สึกแย่ที่พูดจาหยาบคายออกไป (rude comment) เลยอยากจะขอโทษ</li><li><b>วิเคราะห์:</b> การอยากดึงคำพูดตัวเองกลับมา/ถอนคำพูด ใช้สำนวน take back</li><li><b>ตัวเลือกอื่น:</b> get over (ทำใจได้/หายป่วย), come across (บังเอิญเจอ), pick up (รับ/ไปรับ)</li></ul>" },
+        { text: "10. Lisa opened a small bakery with her _____, someone who invests money and helps run the business.", options: ["employee", "customer", "partner", "stranger"], answer: 2, logic: "ข้อนี้ทดสอบคำศัพท์ความสัมพันธ์ (Relationships)", hint: "💡 คนที่ลงทุนด้วยและช่วยบริหารธุรกิจ (invests money and helps run...)", explanation: "<b>ตอบข้อ 3. partner</b><ul class='expl-list'><li><b>คีย์เวิร์ด:</b> invests money (ลงทุน) และ helps run the business (ช่วยบริหารธุรกิจ)</li><li><b>วิเคราะห์:</b> คนทำหน้าที่นี้คือ 'หุ้นส่วนทางธุรกิจ' ตรงกับคำว่า partner</li><li><b>ตัวเลือกอื่น:</b> employee (พนักงาน), customer (ลูกค้า), stranger (คนแปลกหน้า)</li></ul>" },
+        { text: "11. All safety devices _____ every six months.", options: ["inspected", "is inspected", "are inspected", "are inspecting"], answer: 2, logic: "<b>โครงสร้าง Passive Voice</b><br><ul style='text-align:left;'><li>Present = is/am/are + V.3</li><li>Past = was/were + V.3</li><li>Future = will be + V.3</li></ul>", hint: "💡 คีย์เวิร์ด 'every six months' เป็น Present Simple ประธานพหูพจน์และถูกกระทำ", explanation: "<b>ตอบข้อ 3. are inspected</b><ul class='expl-list'><li><b>วิเคราะห์ Tense:</b> every six months บ่งบอกความถี่ = ใช้ Present Simple</li><li><b>วิเคราะห์ Voice:</b> safety devices (อุปกรณ์) ตรวจสอบตัวเองไม่ได้ ต้อง 'ถูกตรวจสอบ' = ใช้ Passive Voice (is/am/are + V.3)</li><li><b>สรุป:</b> ประธานเติม -s เป็นพหูพจน์ จึงต้องใช้ are + inspected</li></ul>" },
+        { text: "12. The new bridge _____ by engineers before it opened to the public.", options: ["inspected", "was inspected", "is inspecting", "has inspect"], answer: 1, logic: "<b>โครงสร้าง Passive Voice</b><br><ul style='text-align:left;'><li>Present = is/am/are + V.3</li><li>Past = was/were + V.3</li><li>Future = will be + V.3</li></ul>", hint: "💡 คีย์เวิร์ด 'before it opened' (อดีต) สะพานไม่สามารถตรวจสอบตัวเองได้", explanation: "<b>ตอบข้อ 2. was inspected</b><ul class='expl-list'><li><b>วิเคราะห์ Tense:</b> before it opened (เป็นอดีต) = ใช้ Past Simple</li><li><b>วิเคราะห์ Voice:</b> bridge (สะพาน) เป็นสิ่งของ ต้อง 'ถูกตรวจสอบ' = ใช้ Passive Voice (was/were + V.3)</li><li><b>สรุป:</b> สะพานมี 1 แห่ง (เอกพจน์) จึงใช้ was + inspected</li></ul>" },
+        { text: "13. The final exam schedule _____ to students later this week.", options: ["will announce", "will be announced", "announced", "is announcing"], answer: 1, logic: "<b>โครงสร้าง Passive Voice</b><br><ul style='text-align:left;'><li>Present = is/am/are + V.3</li><li>Past = was/were + V.3</li><li>Future = will be + V.3</li></ul>", hint: "💡 คีย์เวิร์ด 'later this week' (อนาคต) และตารางสอบไม่สามารถประกาศตัวเองได้", explanation: "<b>ตอบข้อ 2. will be announced</b><ul class='expl-list'><li><b>วิเคราะห์ Tense:</b> later this week (อนาคต) = ต้องมีคำว่า will</li><li><b>วิเคราะห์ Voice:</b> exam schedule (ตารางสอบ) ประกาศตัวเองไม่ได้ ต้อง 'ถูกประกาศ' = ใช้ Passive Voice (will be + V.3)</li><li><b>สรุป:</b> จึงต้องตอบ will be announced</li></ul>" },
+        { text: "14. Several important documents _____ during the meeting yesterday.", options: ["signed", "were signed", "are signing", "sign"], answer: 1, logic: "<b>โครงสร้าง Passive Voice</b><br><ul style='text-align:left;'><li>Present = is/am/are + V.3</li><li>Past = was/were + V.3</li><li>Future = will be + V.3</li></ul>", hint: "💡 คีย์เวิร์ด 'yesterday' (อดีต) ประธานเอกสารหลายฉบับ และเอกสารเซ็นตัวเองไม่ได้", explanation: "<b>ตอบข้อ 2. were signed</b><ul class='expl-list'><li><b>วิเคราะห์ Tense:</b> yesterday (เมื่อวาน) = ใช้ Past Simple</li><li><b>วิเคราะห์ Voice:</b> documents (เอกสาร) เซ็นตัวเองไม่ได้ ต้อง 'ถูกเซ็น' = ใช้ Passive Voice (was/were + V.3)</li><li><b>สรุป:</b> เอกสารเติม -s (พหูพจน์) จึงใช้ were + signed</li></ul>" },
+        { text: "15. Dinner _____ before the guests arrived.", options: ["prepared", "was prepared", "is preparing", "prepares"], answer: 1, logic: "<b>โครงสร้าง Passive Voice</b><br><ul style='text-align:left;'><li>Present = is/am/are + V.3</li><li>Past = was/were + V.3</li><li>Future = will be + V.3</li></ul>", hint: "💡 คีย์เวิร์ด 'arrived' (อดีต) อาหารเย็นไม่สามารถเตรียมตัวเองได้", explanation: "<b>ตอบข้อ 2. was prepared</b><ul class='expl-list'><li><b>วิเคราะห์ Tense:</b> arrived (เกิดในอดีต) = ต้องใช้โครงสร้างอดีต</li><li><b>วิเคราะห์ Voice:</b> Dinner (อาหารเย็น) เตรียมตัวเองไม่ได้ ต้อง 'ถูกเตรียม' = ใช้ Passive Voice</li><li><b>สรุป:</b> อาหารค่ำเป็นนามนับไม่ได้ (เอกพจน์) จึงใช้ was + prepared</li></ul>" },
+        
+        { text: "16. If I _____ more free time, I _____ a new language.", options: ["have / learn", "had / would learn", "had / will learn", "have / would learn"], answer: 1, logic: logicConditionals, hint: "💡 เป็นการสมมติสิ่งที่ไม่เป็นจริงในปัจจุบัน", explanation: "<b>ตอบข้อ 2. had / would learn</b><ul class='expl-list'><li><b>วิเคราะห์:</b> เป็นประโยคเงื่อนไขที่สมมติสิ่งที่ 'ไม่จริงในปัจจุบัน' (ความจริงคือไม่มีเวลา)</li><li><b>โครงสร้าง:</b> If Clause Type 2 = If + S + V.2 , S + would + V.1</li><li><b>ประยุกต์ใช้:</b> If I had (V.2) ..., I would learn (would + V.1) ...</li></ul>" },
+        { text: "17. I wish my cousins _____ closer to my house, so I could _____ them easily.", options: ["didn't live / visit", "lived / visit", "live / visited", "lives / visit"], answer: 1, logic: "<b>โครงสร้าง Wish clause (ปัจจุบัน)</b><br>wish + Subject + V.2<br><br>ใช้เพื่อแสดงความปรารถนาในสิ่งที่ตรงข้ามกับความจริงในปัจจุบัน", hint: "💡 การใช้ wish สมมติสิ่งตรงข้ามกับความจริงในปัจจุบัน ต้องใช้คู่กับ Past Tense (V.2)", explanation: "<b>ตอบข้อ 2. lived / visit</b><ul class='expl-list'><li><b>วิเคราะห์ 1:</b> การใช้ I wish เพื่อปรารถนาสิ่งที่ตรงข้ามกับความจริงในปัจจุบัน ต้องตามด้วย Past Tense เสมอ (จึงใช้ lived)</li><li><b>วิเคราะห์ 2:</b> คำว่า could เป็น Modal Verb กริยาที่ตามหลังต้องเป็นรูปเดิมไม่ผัน (V.1 เพียวๆ) จึงใช้ visit</li></ul>" },
+        { text: "18. If she had left earlier, she _____ the train.", options: ["wouldn't miss", "wouldn't have missed", "won't miss", "wouldn't missed"], answer: 1, logic: logicConditionals, hint: "💡 สังเกต If-clause เป็น had left (สมมติเรื่องในอดีต)", explanation: "<b>ตอบข้อ 2. wouldn't have missed</b><ul class='expl-list'><li><b>วิเคราะห์:</b> ประโยคข้างหน้ามาเป็น If + S + had left (had + V.3) แสดงว่าเป็นเงื่อนไข Type 3 (สมมติเรื่องในอดีตที่แก้ไขไม่ได้)</li><li><b>โครงสร้าง:</b> ประโยคหลักที่ต้องนำมาคู่กันคือ S + would have + V.3</li><li><b>สรุป:</b> จึงต้องตอบ wouldn't have missed (จะไม่พลาดรถไฟหรอก)</li></ul>" },
+        { text: "19. They _____ the project on time if they had planned more carefully.", options: ["would finish", "would have finished", "will finish", "finished"], answer: 1, logic: logicConditionals, hint: "💡 สังเกต If-clause สลับไปอยู่ข้างหลัง เป็น had planned", explanation: "<b>ตอบข้อ 2. would have finished</b><ul class='expl-list'><li><b>วิเคราะห์:</b> ประโยคด้านหลังคือ if they had planned (had + V.3) คือเงื่อนไข Type 3</li><li><b>โครงสร้าง:</b> ประโยคหลักด้านหน้าจึงต้องอยู่ในรูป S + would have + V.3</li><li><b>สรุป:</b> ตอบ would have finished (พวกเขาคงจะทำเสร็จทันเวลาไปแล้ว)</li></ul>" },
+        { text: "20. If I had known the traffic was so bad, I _____ earlier.", options: ["would leave", "would have left", "will leave", "left"], answer: 1, logic: logicConditionals, hint: "💡 สังเกต If-clause เป็น had known", explanation: "<b>ตอบข้อ 2. would have left</b><ul class='expl-list'><li><b>วิเคราะห์:</b> ประโยค If เริ่มด้วย If I had known (had + V.3) เป็นเงื่อนไข Type 3 สมมติเรื่องในอดีต</li><li><b>โครงสร้าง:</b> ประโยคหลังต้องเป็น I + would have + V.3</li><li><b>สรุป:</b> ตอบ would have left (ฉันคงจะออกเร็วกว่านี้)</li></ul>" },
+        
+        { text: "21. A: _______________?<br>B: I feel really tired and have a terrible cough.", options: ["How have you been", "You look pale. What's the matter", "May I speak to you", "When will you leave"], answer: 1, logic: "การสนทนาสถานการณ์ทั่วไป", hint: "💡 B ตอบเรื่องอาการป่วย (เหนื่อยและไอหนัก) A ควรทักทายหรือถามอาการอย่างไร?", explanation: "<b>ตอบข้อ 2. You look pale. What's the matter</b><ul class='expl-list'><li><b>บริบท:</b> B ตอบว่า \"ฉันรู้สึกเหนื่อยมากและไอหนักมาก\" แสดงว่า A ต้องถามถึงอาการเจ็บป่วย</li><li><b>วิเคราะห์ตัวเลือก:</b> You look pale (หน้าซีดจัง) What's the matter? (เป็นอะไรหรือเปล่า) เป็นการถามอาการที่ตรงที่สุด</li></ul>" },
+        { text: "22. Customer: I'm really not satisfied with this laptop.<br>Seller: _______________.", options: ["I can't help you with that", "I'm sorry to hear that. What seems to be the problem", "That's not our responsibility", "You should have checked it earlier"], answer: 1, logic: "การสนทนางานบริการ/ลูกค้า", hint: "💡 ลูกค้าบอกไม่พอใจสินค้า พนักงานขายที่ดีควรตอบรับอย่างไร?", explanation: "<b>ตอบข้อ 2. I'm sorry to hear that. What seems to be the problem</b><ul class='expl-list'><li><b>บริบท:</b> ลูกค้าบอกว่า \"ไม่พอใจกับแล็ปท็อปเครื่องนี้เลย\"</li><li><b>วิเคราะห์มารยาทการขาย:</b> ผู้ขายที่ดีต้องขออภัยก่อน และสอบถามปัญหาอย่างสุภาพที่สุด</li><li><b>แปลคำตอบ:</b> \"เสียใจที่ได้ยินเช่นนั้นครับ ปัญหาคืออะไรหรือครับ?\"</li></ul>" },
+        { text: "23. A: Oh no, you just bumped into me.<br>B: I'm so sorry. _______________.", options: ["I'll be more careful next time.", "You should watch where you're going.", "It's not a big deal.", "That's your fault."], answer: 0, logic: "การขอโทษและตอบรับ", hint: "💡 A บอกว่า B เดินชน B ขอโทษแล้วควรพูดอะไรต่อเพื่อแสดงความรับผิดชอบ?", explanation: "<b>ตอบข้อ 1. I'll be more careful next time.</b><ul class='expl-list'><li><b>บริบท:</b> B เดินชน A และได้กล่าวขอโทษแล้ว (I'm so sorry)</li><li><b>วิเคราะห์:</b> ประโยคที่ควรพูดต่อเพื่อแสดงความรับผิดชอบคือ \"คราวหน้าฉันจะระวังให้มากกว่านี้\" (I'll be more careful next time)</li></ul>" },
+        { text: "24. Customer: I bought this bag yesterday. When I opened it at home, I found a broken zipper. _______________.<br>Seller: I'm very sorry about that. Let me take a look at it.", options: ["I'd like to exchange it, please.", "I've never had this problem before.", "It looks fashionable.", "That's completely fine."], answer: 0, logic: "การสนทนาเพื่อเคลมสินค้า", hint: "💡 ลูกค้าเจอกระเป๋าซิปแตก ลูกค้าต้องการอะไร?", explanation: "<b>ตอบข้อ 1. I'd like to exchange it, please.</b><ul class='expl-list'><li><b>บริบท:</b> ลูกค้าบอกว่าซิปกระเป๋าที่ซื้อไปเมื่อวานมันแตก</li><li><b>วิเคราะห์:</b> สิ่งที่ลูกค้าต้องการที่สุดในสถานการณ์นี้คือ การขอเปลี่ยนสินค้าใหม่ (exchange it) พนักงานจึงตอบว่าขอตรวจสอบดูหน่อย</li></ul>" },
+        { text: "25. Student: I failed my math test, and I'm afraid to tell my parents.<br>Lecturer: _______________.", options: ["If I were you, I would explain the situation honestly", "That's impossible", "I don't understand your point", "There's no solution"], answer: 0, logic: "การให้คำแนะนำ", hint: "💡 อาจารย์ควรให้คำแนะนำที่ดีแก่นักเรียนที่สอบตกอย่างไร?", explanation: "<b>ตอบข้อ 1. If I were you, I would explain the situation honestly</b><ul class='expl-list'><li><b>บริบท:</b> นักเรียนมาปรึกษาว่าสอบตกและกลัวที่จะบอกพ่อแม่</li><li><b>วิเคราะห์:</b> อาจารย์ควรให้คำปรึกษาที่สร้างสรรค์ โดยใช้โครงสร้าง If I were you (ถ้าครูเป็นเธอ...) ครูจะอธิบายสถานการณ์อย่างตรงไปตรงมา</li></ul>" },
+        { text: "Long Conversation 1<br><br>A: What are you doing these days?<br>B: I'm reviewing my notes for the final exams.<br>A: _____(26)_____ I haven't started studying at all yet.<br><br>26.", options: ["How confident you sound", "I'm really worried", "What a smart student", "How relaxed you are"], answer: 1, logic: "บทสนทนาต่อเนื่อง", hint: "💡 A บอกว่ายังไม่ได้เริ่มอ่านหนังสือเลย อารมณ์ของ A ควรเป็นอย่างไร?", explanation: "<b>ตอบข้อ 2. I'm really worried</b><ul class='expl-list'><li><b>บริบทประโยคถัดไป:</b> A บอกว่า \"ฉันยังไม่ได้เริ่มอ่านหนังสือเลยสักนิด\"</li><li><b>วิเคราะห์:</b> ความรู้สึกของคนที่ยังไม่อ่านหนังสือสอบคือ ต้องกังวล (worried) จึงเติม I'm really worried ได้เข้ากับบริบทที่สุด</li></ul>" },
+        { text: "Long Conversation 1<br><br>B: The exams are coming soon. _____(27)_____ you might not have enough time to prepare.<br><br>27.", options: ["I'm afraid that", "I'm glad that", "I can't wait", "I don't mind"], answer: 0, logic: "บทสนทนาต่อเนื่อง", hint: "💡 B แสดงความเป็นห่วงว่า A จะมีเวลาเตรียมตัวไม่ทัน", explanation: "<b>ตอบข้อ 1. I'm afraid that</b><ul class='expl-list'><li><b>บริบทประโยคถัดไป:</b> \"คุณอาจจะมีเวลาเตรียมตัวไม่พอ\"</li><li><b>วิเคราะห์:</b> B ต้องการแสดงความกังวลหรือเป็นห่วงเพื่อน จึงใช้สำนวน I'm afraid that (ฉันเกรงว่า / ฉันกลัวว่า...)</li></ul>" },
+        { text: "Long Conversation 1<br><br>A: Do you think the exams will be very difficult this term?<br>B: _____(28)_____ That's why I'm studying in advance.<br><br>28.", options: ["I think so", "Not at all", "I disagree", "That's impossible"], answer: 0, logic: "บทสนทนาต่อเนื่อง", hint: "💡 B ตอบเห็นด้วยว่าข้อสอบน่าจะยาก เลยต้องอ่านหนังสือล่วงหน้า", explanation: "<b>ตอบข้อ 1. I think so</b><ul class='expl-list'><li><b>บริบท:</b> A ถามว่าคิดว่าข้อสอบจะยากไหม B ตอบประโยคหลังว่า \"นั่นเป็นเหตุผลที่ฉันต้องอ่านหนังสือล่วงหน้าไงล่ะ\"</li><li><b>วิเคราะห์:</b> แสดงว่า B เห็นด้วยว่าข้อสอบต้องยากแน่ๆ จึงตอบว่า I think so (ฉันก็คิดอย่างนั้นนะ)</li></ul>" },
+        { text: "Long Conversation 2<br><br>Chuearaidee: I worked with one of them before. _____(29)_____ She always listens carefully and finishes her tasks on time. She doesn't get distracted easily.<br><br>29.", options: ["One of the girls is very easygoing.", "One of the girls is very focused.", "One of the girls is very talkative.", "One of the girls is very careless."], answer: 1, logic: "บทสนทนาต่อเนื่อง", hint: "💡 คีย์เวิร์ด 'doesn't get distracted easily' (ไม่เสียสมาธิง่าย) ตรงกับนิสัยใด?", explanation: "<b>ตอบข้อ 2. One of the girls is very focused.</b><ul class='expl-list'><li><b>คีย์เวิร์ดบอกใบ้:</b> listens carefully (ตั้งใจฟัง), finishes tasks on time (ทำงานเสร็จตรงเวลา), doesn't get distracted easily (ไม่วอกแวก/ไม่เสียสมาธิง่าย)</li><li><b>วิเคราะห์:</b> พฤติกรรมทั้งหมดนี้คือคนที่มีความจดจ่อสูง ตรงกับคำว่า focused</li></ul>" },
+        { text: "Long Conversation 2<br><br>Chuearaidee: There's also a student who always sets high goals and wants every project to be outstanding.<br>Yod: _____(30)_____<br>Chuearaidee: Yes, he really wants to achieve the best results in every assignment.<br><br>30.", options: ["He sounds ambitious.", "He sounds insensitive.", "He sounds unmotivated.", "He sounds reserved."], answer: 0, logic: "บทสนทนาต่อเนื่อง", hint: "💡 คีย์เวิร์ด 'sets high goals' (ตั้งเป้าหมายไว้สูง) ตรงกับนิสัยใด?", explanation: "<b>ตอบข้อ 1. He sounds ambitious.</b><ul class='expl-list'><li><b>คีย์เวิร์ดบอกใบ้:</b> sets high goals (ตั้งเป้าหมายไว้สูง), wants to be outstanding (ต้องการให้งานโดดเด่น), achieve best results (อยากได้ผลลัพธ์ที่ดีที่สุด)</li><li><b>วิเคราะห์:</b> คนที่มีลักษณะนี้คือคน 'ทะเยอทะยาน' ตรงกับคำว่า ambitious</li></ul>" },
+        { passage: 1, text: "31. The most suitable title for this passage is...", options: ["A Cancelled Trip but a Successful Lesson", "The Quietest Classroom in the School", "A Visit to the Marine Center", "The Importance of Speaking Quietly"], answer: 0, logic: "Reading Comprehension", hint: "💡 อ่านภาพรวม: ทริปโดนยกเลิกเพราะพายุ แต่เด็กๆ ก็ยังเรียนรู้อย่างดีในห้อง", explanation: "<b>ตอบข้อ 1. A Cancelled Trip but a Successful Lesson</b><ul class='expl-list'><li><b>วิเคราะห์ภาพรวม:</b> ครึ่งแรกของเรื่องบอกว่าทริปถูกยกเลิกเพราะพายุ ครึ่งหลังบอกว่าครูจัดกิจกรรมในห้องแทนและเด็กๆ ก็ได้เรียนรู้เยอะมาก</li><li><b>สรุป:</b> จึงตรงกับชื่อเรื่อง 'ทริปที่ถูกยกเลิกแต่กลายเป็นบทเรียนที่สำเร็จ'</li></ul>" },
+        { passage: 1, text: "32. In paragraph 2, the word 'permission' is closest in meaning to...", options: ["being allowed to do something", "being forced to do something", "planning to do something", "refusing to do something"], answer: 0, logic: "Reading Comprehension", hint: "💡 Ms. Lina gave them 'permission' to stay in the classroom... (ครูให้...อยู่ในห้องเรียน)", explanation: "<b>ตอบข้อ 1. being allowed to do something</b><ul class='expl-list'><li><b>บริบท:</b> ครู Ms. Lina ให้ permission นักเรียนในการอยู่ในห้องเรียน</li><li><b>วิเคราะห์คำศัพท์:</b> permission แปลว่า 'การอนุญาต' ซึ่งตรงกับความหมายว่า 'being allowed to do something' (ได้รับการอนุญาตให้ทำบางอย่าง)</li></ul>" },
+        { passage: 1, text: "33. The pronoun 'she' in paragraph 2 refers to...", options: ["Tanya", "Ms. Lina", "the school director", "Ken"], answer: 1, logic: "Reading Comprehension", hint: "💡 'Ms. Lina said she would check the weather...' she ตรงนี้หมายถึงใคร?", explanation: "<b>ตอบข้อ 2. Ms. Lina</b><ul class='expl-list'><li><b>จุดสังเกตในเรื่อง:</b> ประโยคเต็มคือ \"Ms. Lina said she would check the weather report first.\"</li><li><b>วิเคราะห์:</b> 'she' ตัวนี้ทำหน้าที่แทนประธานของประโยค ซึ่งก็คือ Ms. Lina นั่นเอง</li></ul>" },
+        { passage: 1, text: "34. Based on Ken's comment, what does he mean about the class activity?", options: ["The students preferred indoor lessons all the time.", "The storm prevented the teacher from teaching anything.", "The weather helped the class learn together in a different way.", "The trip had already been cancelled before the storm."], answer: 2, logic: "Reading Comprehension", hint: "💡 Ken บอกว่า 'without the storm, they wouldn't have studied together like this'", explanation: "<b>ตอบข้อ 3. The weather helped the class learn together in a different way.</b><ul class='expl-list'><li><b>จุดสังเกตในเรื่อง:</b> เคนพูดว่า \"ถ้าไม่มีพายุ พวกเขาคงไม่ได้มาเรียนด้วยกันแบบนี้\"</li><li><b>วิเคราะห์ความหมายแฝง:</b> หมายความว่า สภาพอากาศ(พายุ) เป็นตัวช่วยให้พวกเขามีโอกาสได้เรียนรู้ร่วมกันในรูปแบบใหม่ที่ต่างไปจากเดิม</li></ul>" },
+        { passage: 1, text: "35. According to the passage, which sentence best represents the teacher's advice?", options: ["We should cancel all future trips.", "If I were you, I'd keep your notebooks ready.", "You must leave the classroom immediately.", "The media room will be closed tomorrow."], answer: 1, logic: "Reading Comprehension", hint: "💡 ลองหาประโยคคำแนะนำที่ปรากฏในเนื้อเรื่อง", explanation: "<b>ตอบข้อ 2. If I were you, I'd keep your notebooks ready.</b><ul class='expl-list'><li><b>วิเคราะห์:</b> ในเนื้อเรื่องย่อหน้าที่ 3 ครูพูดอย่างชัดเจนว่า \"If I were you, I'd keep your notebooks ready. We will still learn something useful today.\" ซึ่งเป็นการให้คำแนะนำแก่นักเรียน</li></ul>" },
+        { passage: 2, text: "36. What is the main idea of the passage?", options: ["People prefer buying luxury products more than before.", "The sharing economy is changing how people use and design everyday items.", "Cities are banning the use of personal equipment.", "Students are required to repair all broken devices."], answer: 1, logic: "Reading Comprehension", hint: "💡 เนื้อเรื่องพูดถึงเทรนด์ใหม่ 'Sharing economy' และผลกระทบต่อสิ่งของต่างๆ", explanation: "<b>ตอบข้อ 2. The sharing economy is changing how people use and design everyday items.</b><ul class='expl-list'><li><b>วิเคราะห์ภาพรวม:</b> ย่อหน้าแรกๆ พูดถึงเทรนด์การใช้ของร่วมกัน (Sharing economy) ย่อหน้าหลังๆ พูดถึงการปรับตัวของนักออกแบบสินค้า</li><li><b>สรุป:</b> ใจความสำคัญคือเศรษฐกิจแบบแบ่งปันกำลังเปลี่ยนวิถีชีวิตและการออกแบบสินค้า</li></ul>" },
+        { passage: 2, text: "37. What does the word 'ones' in paragraph 2 refer to? <br>(...instead of purchasing new ones)", options: ["the tools and equipment", "the universities", "the sharing programs", "the training videos"], answer: 0, logic: "Reading Comprehension", hint: "💡 ประโยคหน้า 'borrowing equipment and learning how to maintain simple tools instead of purchasing new ones'", explanation: "<b>ตอบข้อ 1. the tools and equipment</b><ul class='expl-list'><li><b>จุดสังเกตในเรื่อง:</b> ประโยคเต็มคือ \"began borrowing equipment and learning how to maintain simple tools instead of purchasing new ones\"</li><li><b>วิเคราะห์:</b> ones เป็นสรรพนามที่ใช้แทนคำนามที่เพิ่งกล่าวไป เพื่อไม่ให้พูดซ้ำ ซึ่งก็คือ tools (เครื่องมือ) และ equipment (อุปกรณ์)</li></ul>" },
+        { passage: 2, text: "38. Why were rules introduced for shared facilities?", options: ["to encourage users to buy more equipment", "to make shared spaces more entertaining", "to keep shared items safe and properly used", "to reduce the number of community programs"], answer: 2, logic: "Reading Comprehension", hint: "💡 ทำไมต้องมีกฎ? เพื่อแก้ปัญหาเรื่องของเสียหาย (damaged by careless users)", explanation: "<b>ตอบข้อ 3. to keep shared items safe and properly used</b><ul class='expl-list'><li><b>จุดสังเกตในเรื่อง:</b> ย่อหน้าที่ 3 ระบุว่าคนกังวลเรื่องของจะพังจากผู้ใช้ที่ไม่ระวัง (damaged by careless users) เลยต้องมีกฎ</li><li><b>วิเคราะห์:</b> กฎจึงถูกตั้งขึ้นเพื่อรักษาสิ่งของให้ปลอดภัยและถูกใช้งานอย่างถูกต้อง</li></ul>" },
+        { passage: 2, text: "39. What is TRUE according to the passage?", options: ["Shared services make people buy more personal items.", "Some users are worried about damage and overcrowding in shared spaces.", "Manufacturers are only focusing on decorative product designs.", "Shared programs have been rejected by all universities."], answer: 1, logic: "Reading Comprehension", hint: "💡 ลองหาจุดที่พูดเรื่องความกังวล (worried/concerned)", explanation: "<b>ตอบข้อ 2. Some users are worried about damage and overcrowding in shared spaces.</b><ul class='expl-list'><li><b>วิเคราะห์:</b> ในเรื่องระบุตรงตัวในย่อหน้าที่ 3 ว่า \"They worry that shared spaces may become crowded or that borrowed items might be damaged...\" ข้อนี้จึงเป็นความจริงที่สุดตามเนื้อเรื่อง</li></ul>" },
+        { passage: 2, text: "40. According to the passage, what will product designers probably do in the future?", options: ["Design products that are stronger and easier to repair", "Stop offering repair and maintenance services", "Focus only on decorative product features", "Produce more disposable items every year"], answer: 0, logic: "Reading Comprehension", hint: "💡 ในย่อหน้าสุดท้าย พูดถึงนักออกแบบในอนาคตว่า 'need to be more durable and easier to repair'", explanation: "<b>ตอบข้อ 1. Design products that are stronger and easier to repair</b><ul class='expl-list'><li><b>จุดสังเกตในเรื่อง:</b> ในย่อหน้าที่ 4 ระบุว่าสินค้าในอนาคต \"need to be more durable and easier to repair\"</li><li><b>วิเคราะห์:</b> นักออกแบบจึงมีแนวโน้มที่จะออกแบบสินค้าให้แข็งแรงทนทานขึ้น (stronger) และซ่อมแซมง่ายขึ้น (easier to repair)</li></ul>" }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+
+    function startQuiz() {
+        currentQ = 0; score = 0;
+        questions.forEach(q => { q.answered = false; q.selectedOption = null; });
+        document.getElementById('question-menu').classList.add('hidden');
+        updateScoreDisplay(); loadQuestion(); navTo('page-quiz');
+    }
+
+    function updateScoreDisplay() {
+        document.getElementById('current-score').innerText = score;
+        document.getElementById('total-questions').innerText = questions.length;
+    }
+
+    function toggleQuestionMenu() {
+        document.getElementById('question-menu').classList.toggle('hidden');
+        renderQuestionMenu();
+    }
+
+    function renderQuestionMenu() {
+        const grid = document.getElementById('q-grid');
+        grid.innerHTML = ''; 
+        questions.forEach((q, index) => {
+            let btn = document.createElement('button');
+            btn.className = 'q-btn'; btn.innerText = index + 1;
+            if (q.answered) {
+                if (q.selectedOption === q.answer) btn.classList.add('answered-correct');
+                else btn.classList.add('answered-incorrect');
+            }
+            if (index === currentQ) btn.classList.add('active');
+            btn.onclick = () => { currentQ = index; loadQuestion(); };
+            grid.appendChild(btn);
+        });
+    }
+
+    function loadQuestion() {
+        const q = questions[currentQ];
+        document.getElementById('question-text').innerHTML = q.text;
+        document.getElementById('logic-text').innerHTML = q.logic;
+        document.getElementById('hint-box').innerHTML = q.hint;
+        renderQuestionMenu();
+        
+        if (q.passage) document.getElementById('passage-btn-container').classList.remove('hidden');
+        else document.getElementById('passage-btn-container').classList.add('hidden');
+
+        document.getElementById('explanation-box').classList.add('hidden');
+        document.getElementById('hint-box').classList.add('hidden');
+
+        const optionsList = document.getElementById('options-list');
+        optionsList.innerHTML = '';
+        optionsList.classList.remove('disabled'); 
+        
+        q.options.forEach((opt, index) => {
+            let li = document.createElement('li');
+            li.innerText = `${index + 1}. ${opt}`;
+            if (q.answered) {
+                optionsList.classList.add('disabled');
+                if (index === q.answer) li.classList.add('correct');
+                else if (index === q.selectedOption) li.classList.add('incorrect');
+                document.getElementById('explanation-text').innerHTML = q.explanation;
+                document.getElementById('explanation-box').classList.remove('hidden');
+            } else {
+                li.onclick = () => selectAnswer(index, li);
+            }
+            optionsList.appendChild(li);
+        });
+
+        const nextBtn = document.getElementById('btn-next');
+        if (currentQ === questions.length - 1) {
+            nextBtn.innerText = "ส่งข้อสอบ";
+            nextBtn.classList.add('submit');
+        } else {
+            nextBtn.innerText = "ถัดไป ----->";
+            nextBtn.classList.remove('submit');
+        }
+    }
+
+    function selectAnswer(index, liElement) {
+        const q = questions[currentQ];
+        q.answered = true; q.selectedOption = index;
+        document.getElementById('options-list').classList.add('disabled');
+
+        if (index === q.answer) {
+            liElement.classList.add('correct'); score++; updateScoreDisplay();
+        } else {
+            liElement.classList.add('incorrect');
+            document.getElementById('options-list').querySelectorAll('li')[q.answer].classList.add('correct');
+        }
+        document.getElementById('explanation-text').innerHTML = q.explanation;
+        document.getElementById('explanation-box').classList.remove('hidden');
+        renderQuestionMenu();
+    }
+
+    function toggleHint() { document.getElementById('hint-box').classList.toggle('hidden'); }
+
+    function nextQuestion() {
+        if (currentQ < questions.length - 1) { currentQ++; loadQuestion(); }
+        else submitQuiz();
+    }
+
+    function prevQuestion() { if (currentQ > 0) { currentQ--; loadQuestion(); } }
+
+    function submitQuiz() {
+        const unansweredCount = questions.filter(q => !q.answered).length;
+        
+        if (unansweredCount > 0) {
+            const confirmSubmit = confirm(`⚠️ คุณยังทำข้อสอบไม่ครบจำนวน ${unansweredCount} ข้อ\n\nคุณต้องการ "ยืนยันส่งข้อสอบ" เลยหรือไม่?\n(กด OK เพื่อส่งข้อสอบ / กด Cancel เพื่อทำต่อ)`);
+            
+            if (!confirmSubmit) {
+                const firstUnansweredIndex = questions.findIndex(q => !q.answered);
+                currentQ = firstUnansweredIndex;
+                loadQuestion();
+                return; 
+            }
+        }
+        
+        document.getElementById('final-score').innerText = score;
+        document.getElementById('final-total').innerText = questions.length;
+        navTo('page-result');
+    }
+
+    // ==========================================
+    // ส่วนระบบคำศัพท์ (Vocab Logic) - 30 คำ (หน้าละ 5 ข้อ)
+    // ==========================================
+    const vocabData = [
+        { word: "decisive", meaning: "เด็ดขาด, ตัดสินใจเก่ง" },
+        { word: "easygoing", meaning: "สบายๆ, ไม่เรื่องมาก" },
+        { word: "talkative", meaning: "ช่างพูด" },
+        { word: "thoughtful", meaning: "เอาใจใส่, คิดถึงผู้อื่น" },
+        { word: "arrogant", meaning: "หยิ่งยโส" },
+        { word: "acquaintance", meaning: "คนรู้จัก (แต่ไม่ใช่เพื่อนสนิท)" },
+        { word: "colleague", meaning: "เพื่อนร่วมงาน" },
+        { word: "neighbor", meaning: "เพื่อนบ้าน" },
+        { word: "relative", meaning: "ญาติ" },
+        { word: "partner", meaning: "หุ้นส่วน, คู่หู" },
+        { word: "affordable", meaning: "ราคาจับต้องได้ ไม่แพง" },
+        { word: "beneficial", meaning: "มีประโยชน์" },
+        { word: "essential", meaning: "จำเป็น, ขาดไม่ได้" },
+        { word: "flexible", meaning: "ยืดหยุ่น, ปรับตัวได้" },
+        { word: "portable", meaning: "พกพาสะดวก" },
+        { word: "practical", meaning: "ใช้งานได้จริง, นำไปปฏิบัติได้" },
+        { word: "straightforward", meaning: "ตรงไปตรงมา, เข้าใจง่าย" },
+        { word: "unique", meaning: "มีเอกลักษณ์, ไม่ซ้ำใคร" },
+        { word: "set up", meaning: "ก่อตั้ง, จัดเตรียม" },
+        { word: "overcome obstacles", meaning: "เอาชนะอุปสรรคมากมาย" },
+        { word: "optician", meaning: "ช่างตัดแว่น, ผู้เชี่ยวชาญด้านสายตา" },
+        { word: "paramedic", meaning: "เจ้าหน้าที่กู้ชีพ" },
+        { word: "psychologist", meaning: "นักจิตวิทยา" },
+        { word: "surgeon", meaning: "ศัลยแพทย์" },
+        { word: "turn off", meaning: "ปิด (เครื่องใช้ไฟฟ้า), ทำให้หมดความสนใจ" },
+        { word: "give up", meaning: "ยอมแพ้, เลิกทำ" },
+        { word: "look after", meaning: "ดูแล, เอาใจใส่" },
+        { word: "pick up", meaning: "รับ, ไปรับ" },
+        { word: "take back", meaning: "เอาคืน, ถอนคำพูด" },
+        { word: "get over", meaning: "ฟื้นตัว, หายดี, ทำใจได้" }
+    ];
+
+    const vocabPerPage = 5;
+    let currentVocabPage = 0;
+    let matchedVocab = new Set(); 
+    let selectedVocabItem = null; // เก็บคำที่ถูกแตะเลือกไว้
+
+    function startVocab() {
+        currentVocabPage = 0;
+        matchedVocab.clear();
+        selectedVocabItem = null;
+        document.getElementById('vocab-menu').classList.add('hidden');
+        loadVocabPage();
+        navTo('page-vocab');
+    }
+
+    function toggleVocabMenu() {
+        document.getElementById('vocab-menu').classList.toggle('hidden');
+        renderVocabMenu();
+    }
+
+    function renderVocabMenu() {
+        const grid = document.getElementById('v-grid');
+        grid.innerHTML = '';
+        const totalPages = Math.ceil(vocabData.length / vocabPerPage);
+
+        for (let i = 0; i < totalPages; i++) {
+            let btn = document.createElement('button');
+            btn.className = 'q-btn'; 
+            btn.innerText = i + 1;
+
+            const start = i * vocabPerPage;
+            const pageData = vocabData.slice(start, start + vocabPerPage);
+            const allMatched = pageData.every(v => matchedVocab.has(v.word));
+
+            if (allMatched) btn.classList.add('answered-correct');
+            if (i === currentVocabPage) btn.classList.add('active');
+
+            btn.onclick = () => { currentVocabPage = i; loadVocabPage(); };
+            grid.appendChild(btn);
+        }
+    }
+
+    function loadVocabPage() {
+        selectedVocabItem = null; // เคลียร์ของเก่าทุกครั้งที่เปลี่ยนหน้า
+        const start = currentVocabPage * vocabPerPage;
+        const pageData = vocabData.slice(start, start + vocabPerPage);
+
+        const meaningsContainer = document.getElementById('meanings-container');
+        const vocabContainer = document.getElementById('vocab-container');
+        meaningsContainer.innerHTML = ''; vocabContainer.innerHTML = '';
+
+        // สุ่มความหมาย
+        let shuffledMeanings = [...pageData].sort(() => Math.random() - 0.5);
+
+        shuffledMeanings.forEach((item, index) => {
+            if (!matchedVocab.has(item.word)) {
+                let div = document.createElement('div');
+                div.className = 'draggable-item'; div.draggable = true;
+                div.innerText = item.meaning; div.id = `drag-${start}-${index}`; div.dataset.word = item.word;
+                
+                // รองรับทั้งลากและคลิก
+                div.addEventListener('dragstart', dragStart);
+                div.addEventListener('click', handleVocabItemClick);
+                
+                meaningsContainer.appendChild(div);
+            }
+        });
+
+        // สุ่มคำศัพท์ (Drop Zone)
+        let shuffledWords = [...pageData].sort(() => Math.random() - 0.5);
+        
+        shuffledWords.forEach((item) => {
+            let wrapper = document.createElement('div'); 
+            wrapper.style.display = 'flex'; wrapper.style.alignItems = 'center'; wrapper.style.marginBottom = '10px';
+            
+            let wordLabel = document.createElement('div'); 
+            wordLabel.className = 'word-label';
+            wordLabel.innerText = item.word;
+            
+            let dropZone = document.createElement('div'); 
+            dropZone.className = 'drop-zone'; dropZone.style.flexGrow = '1'; dropZone.dataset.matchWord = item.word;
+            
+            if (matchedVocab.has(item.word)) {
+                dropZone.style.background = '#e8f5e9';
+                dropZone.style.borderColor = 'transparent';
+                let div = document.createElement('div');
+                div.className = 'draggable-item';
+                div.style.background = 'var(--success)'; div.style.color = 'white'; div.style.border = 'none'; div.style.margin = '0'; div.style.cursor = 'default';
+                div.innerText = item.meaning;
+                dropZone.appendChild(div);
+            } else {
+                dropZone.addEventListener('dragover', dragOver);
+                dropZone.addEventListener('dragleave', dragLeave);
+                dropZone.addEventListener('drop', dropVocab);
+                dropZone.addEventListener('click', handleDropZoneClick); // เพิ่มการแตะช่องว่าง
+            }
+            wrapper.appendChild(wordLabel); wrapper.appendChild(dropZone); vocabContainer.appendChild(wrapper);
+        });
+
+        const totalPages = Math.ceil(vocabData.length / vocabPerPage);
+        if (currentVocabPage === totalPages - 1) {
+            document.getElementById('vocab-survey').classList.remove('hidden');
+        } else {
+            document.getElementById('vocab-survey').classList.add('hidden');
+        }
+
+        renderVocabMenu();
+    }
+
+    // --- ระบบแตะเลือก (Tap to Match) ---
+    function handleVocabItemClick(e) {
+        const item = e.target;
+        if (selectedVocabItem === item) {
+            // แตะซ้ำเพื่อยกเลิกการเลือก
+            item.classList.remove('selected-item');
+            selectedVocabItem = null;
+        } else {
+            if (selectedVocabItem) selectedVocabItem.classList.remove('selected-item');
+            item.classList.add('selected-item');
+            selectedVocabItem = item;
+        }
+    }
+
+    function handleDropZoneClick(e) {
+        if (!selectedVocabItem) return; // ถ้าไม่ได้เลือกคำไหนไว้ ให้ข้ามไป
+        const dropzone = e.target.closest('.drop-zone');
+        if (!dropzone || dropzone.children.length > 0) return; // ถ้าไม่ใช่โซนดรอป หรือมีของอยู่แล้ว
+
+        checkVocabMatch(selectedVocabItem, dropzone);
+    }
+
+    // --- ระบบลากวาง (Drag and Drop) ---
+    function dragStart(e) { 
+        e.dataTransfer.setData('text/plain', e.target.id);
+        if (selectedVocabItem) selectedVocabItem.classList.remove('selected-item');
+        selectedVocabItem = e.target; 
+    }
+    function dragOver(e) { e.preventDefault(); e.target.closest('.drop-zone').classList.add('hovered'); }
+    function dragLeave(e) { e.target.closest('.drop-zone').classList.remove('hovered'); }
+
+    function dropVocab(e) {
+        e.preventDefault();
+        const dropzone = e.target.closest('.drop-zone');
+        if (dropzone) dropzone.classList.remove('hovered');
+
+        const id = e.dataTransfer.getData('text/plain');
+        const draggableElement = document.getElementById(id);
+        
+        if (dropzone && dropzone.children.length === 0) {
+            checkVocabMatch(draggableElement, dropzone);
+        }
+    }
+
+    // --- ฟังก์ชันตรวจคำตอบ (ใช้ร่วมกันทั้งลากและแตะ) ---
+    function checkVocabMatch(dragElement, dropzone) {
+        const matchWord = dropzone.dataset.matchWord;
+        const dragWord = dragElement.dataset.word;
+
+        if (matchWord === dragWord) {
+            // ถูก
+            dropzone.appendChild(dragElement);
+            dragElement.classList.remove('selected-item');
+            dragElement.style.background = 'var(--success)';
+            dragElement.style.color = 'white';
+            dragElement.style.border = 'none';
+            dragElement.style.margin = '0';
+            dragElement.draggable = false;
+            dragElement.style.cursor = 'default';
+            dropzone.style.background = '#e8f5e9';
+
+            matchedVocab.add(matchWord);
+            selectedVocabItem = null;
+            renderVocabMenu();
+        } else {
+            // ผิด
+            dragElement.classList.remove('selected-item');
+            dragElement.style.background = 'var(--danger)';
+            dragElement.style.color = 'white';
+            
+            dragElement.style.transform = 'translateX(-10px)';
+            setTimeout(() => dragElement.style.transform = 'translateX(10px)', 100);
+            setTimeout(() => dragElement.style.transform = 'translateX(-10px)', 200);
+            setTimeout(() => dragElement.style.transform = 'translateX(0)', 300);
+
+            setTimeout(() => {
+                dragElement.style.background = 'white';
+                dragElement.style.color = 'var(--text-dark)';
+            }, 800);
+            selectedVocabItem = null;
+        }
+    }
+
+    function nextVocabPage() {
+        const totalPages = Math.ceil(vocabData.length / vocabPerPage);
+        if (currentVocabPage < totalPages - 1) { currentVocabPage++; loadVocabPage(); }
+    }
+    function prevVocabPage() {
+        if (currentVocabPage > 0) { currentVocabPage--; loadVocabPage(); }
+    }
+
+</script>
+</body>
+</html>
