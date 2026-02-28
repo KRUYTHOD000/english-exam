@@ -15,15 +15,38 @@
             --danger: #ff4d4f;
             --success: #4CAF50;
             --warning: #ff9800;
+            --card-bg: #ffffff;
+            --modal-bg: rgba(0,0,0,0.6);
         }
 
-        body { font-family: 'Kanit', sans-serif; background-color: var(--pink-bg); color: var(--text-dark); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        /* โหมดกลางคืน (Dark Mode) */
+        body.dark-mode {
+            --pink-bg: #1a1a2e;
+            --pink-card: #16213e;
+            --pink-btn: #0f3460;
+            --pink-btn-hover: #e94560;
+            --text-dark: #e6e6e6;
+            --card-bg: #1f2a48;
+            --modal-bg: rgba(0,0,0,0.8);
+            --danger: #ff4d4f;
+            --success: #28a745;
+        }
+
+        body { font-family: 'Kanit', sans-serif; background-color: var(--pink-bg); color: var(--text-dark); margin: 0; padding: 20px; display: flex; justify-content: center; transition: background-color 0.3s, color 0.3s; }
         .container { max-width: 900px; width: 100%; position: relative; }
         .hidden { display: none !important; }
         .text-center { text-align: center; }
         .mt-2 { margin-top: 20px; }
         
-        .card { background-color: var(--pink-card); border-radius: 20px; padding: 20px 30px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        /* ปุ่ม Dark Mode */
+        .theme-toggle { position: absolute; top: 0; right: 0; background: var(--pink-btn); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; font-size: 1.5rem; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 100; transition: 0.3s;}
+        .theme-toggle:hover { transform: scale(1.1); }
+
+        /* แถบ Progress Bar */
+        .progress-container { width: 100%; background-color: var(--card-bg); border-radius: 10px; margin-bottom: 20px; overflow: hidden; height: 12px; border: 1px solid var(--pink-card); }
+        .progress-bar { height: 100%; background-color: var(--success); width: 0%; transition: width 0.3s ease; }
+
+        .card { background-color: var(--pink-card); border-radius: 20px; padding: 20px 30px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: background-color 0.3s;}
         button { font-family: 'Kanit', sans-serif; cursor: pointer; border: none; transition: 0.3s; }
         .btn-main { background-color: var(--pink-btn); color: white; padding: 15px 30px; border-radius: 30px; font-size: 1.2rem; width: 100%; margin: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-main:hover { background-color: var(--pink-btn-hover); transform: translateY(-2px); }
@@ -34,17 +57,17 @@
 
         .quiz-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .options-list { list-style: none; padding: 0; }
-        .options-list li { background: white; margin: 10px 0; padding: 10px 20px; border-radius: 10px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .options-list li { background: var(--card-bg); margin: 10px 0; padding: 10px 20px; border-radius: 10px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; color: var(--text-dark); box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
         .options-list li:hover { border-color: var(--pink-btn); }
         .options-list li.correct { background-color: var(--success) !important; color: white !important; border-color: var(--success) !important; }
         .options-list li.incorrect { background-color: var(--danger) !important; color: white !important; border-color: var(--danger) !important; }
         .options-list.disabled li { pointer-events: none; }
 
-        .logic-box { background-color: var(--pink-card); padding: 20px; border-radius: 20px; text-align: center; height: fit-content; }
-        .score-display { display: flex; justify-content: flex-end; align-items: center; font-size: 1.2rem; font-weight: bold; color: var(--pink-btn-hover); margin-bottom: 10px; gap: 15px; }
+        .logic-box { background-color: var(--pink-card); padding: 20px; border-radius: 20px; text-align: center; height: fit-content; transition: 0.3s;}
+        .score-display { display: flex; justify-content: space-between; align-items: center; font-size: 1.2rem; font-weight: bold; color: var(--pink-btn-hover); margin-bottom: 10px; }
 
         /* Menu Selector (Quiz & Vocab) */
-        .q-btn { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--pink-btn); background: white; color: var(--text-dark); font-weight: bold; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+        .q-btn { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--pink-btn); background: var(--card-bg); color: var(--text-dark); font-weight: bold; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: 0.3s;}
         .q-btn:hover { background: var(--pink-bg); }
         .q-btn.answered-correct { background: var(--success); color: white; border-color: var(--success); }
         .q-btn.answered-incorrect { background: var(--danger); color: white; border-color: var(--danger); }
@@ -55,30 +78,32 @@
 
         /* Drag & Drop & Click Layout */
         .dnd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; }
-        .draggable-item { background-color: white; padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 10px; cursor: pointer; border: 2px dashed var(--pink-btn); transition: background 0.3s, color 0.3s, transform 0.1s, border 0.3s; user-select: none; }
-        .draggable-item.selected-item { border: 3px solid var(--warning) !important; background-color: #fff9e6 !important; transform: scale(1.05); }
+        .draggable-item { background-color: var(--card-bg); color: var(--text-dark); padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 10px; cursor: pointer; border: 2px dashed var(--pink-btn); transition: 0.3s; user-select: none; }
+        .draggable-item.selected-item { border: 3px solid var(--warning) !important; background-color: #fff9e6 !important; transform: scale(1.05); color: #333;}
         
         .drop-zone { background-color: var(--pink-card); padding: 15px; border-radius: 15px; min-height: 25px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; border: 2px dashed transparent; cursor: pointer; transition: background 0.3s; }
-        .drop-zone.hovered { border-color: white; background-color: #ff8fb9; }
+        .drop-zone.hovered { border-color: var(--card-bg); background-color: var(--pink-btn); }
         
         .word-label { width: 160px; font-weight: bold; }
         .footer { text-align: right; margin-top: 50px; font-size: 0.9rem; color: #666; }
 
-        #passage-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; padding: 30px; border-radius: 20px; max-width: 800px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        #passage-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--card-bg); color: var(--text-dark); padding: 30px; border-radius: 20px; max-width: 800px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .modal-close { position: absolute; top: 15px; right: 15px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
         .passage-text p { line-height: 1.6; margin-bottom: 15px; font-size: 1.05rem; }
 
         /* Survey Box */
-        .survey-box { background: white; border: 3px dashed var(--pink-btn); border-radius: 15px; padding: 25px; margin-top: 30px; text-align: center; }
+        .survey-box { background: var(--card-bg); border: 3px dashed var(--pink-btn); border-radius: 15px; padding: 25px; margin-top: 30px; text-align: center; transition: 0.3s;}
         .survey-btn { display: inline-block; background-color: var(--pink-btn); color: white; padding: 12px 30px; border-radius: 30px; font-size: 1.2rem; text-decoration: none; font-weight: bold; transition: 0.3s; margin-top: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .survey-btn:hover { background-color: var(--pink-btn-hover); transform: translateY(-2px); }
 
-        /* การปรับแต่งสำหรับมือถือโดยเฉพาะ */
+        /* Analytics Grid */
+        .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; text-align: left; }
+        .stat-box { background: var(--card-bg); border-radius: 15px; padding: 15px; border: 2px solid var(--pink-btn); box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+        .stat-title { font-weight: bold; font-size: 1.1rem; color: var(--pink-btn-hover); margin-bottom: 5px; }
+
         @media (max-width: 768px) { 
             .quiz-grid { grid-template-columns: 1fr; } 
-            
-            /* ปรับหน้าศัพท์ให้เป็น 2 ฝั่งในมือถือ */
             .dnd-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; } 
             .draggable-item { padding: 8px; font-size: 0.85rem; margin-bottom: 8px; }
             .drop-zone { padding: 8px; min-height: 35px; margin-bottom: 8px; font-size: 0.85rem; }
@@ -86,27 +111,34 @@
             h3.text-center { font-size: 1.1rem; }
             .dnd-grid > div:nth-child(2) > div { flex-direction: column !important; align-items: flex-start !important; }
             .dnd-grid > div:nth-child(2) > div .drop-zone { width: 100%; margin-top: 5px; box-sizing: border-box; }
+            .analytics-grid { grid-template-columns: 1fr; }
+            .theme-toggle { top: 10px; right: 10px; }
         }
     </style>
 </head>
 <body>
+
+<button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
 
 <div class="container">
     <div id="page-home">
         <div class="card text-center" style="background-color: var(--pink-card);">
             <h1>แนวข้อสอบปลายภาค English for Communication 2</h1>
             <h3 style="color: var(--text-dark); margin-bottom: 5px; font-weight: 600;">รายวิชา 0000152 ภาษาอังกฤษเพื่อการสื่อสาร 2</h3>
-            <p style="font-size: 1.1rem; background: white; display: inline-block; padding: 5px 20px; border-radius: 20px; color: var(--pink-btn-hover); font-weight: bold; margin-top: 10px; border: 2px solid white;">
+            <p style="font-size: 1.1rem; background: var(--card-bg); display: inline-block; padding: 5px 20px; border-radius: 20px; color: var(--pink-btn-hover); font-weight: bold; margin-top: 10px; border: 2px solid var(--card-bg);">
                 📅 วันที่สอบ: 2 มีนาคม 2569 | ⏰ เวลา: 9.00 - 12.00 น.
             </p>
-            <hr style="border-top: 2px dashed white; margin: 25px 0;">
+            <div id="high-score-display" style="font-size: 1.1rem; color: var(--success); font-weight: bold; margin-top: 10px; display: none;">
+                🏆 สถิติสูงสุดของคุณ: <span id="hs-val">0</span>/60
+            </div>
+            <hr style="border-top: 2px dashed var(--card-bg); margin: 25px 0;">
             <h3 style="margin-top: 0;">ข้อสอบมีทั้งหมด 60 ข้อ</h3>
             <p style="font-size: 1.05rem;">- 40 จากที่เรียนในห้อง<br>- 20 จากใน tsu mooc for all</p>
         </div>
         
         <button class="btn-main" onclick="startQuiz()">
-            แบบทดสอบจำลอง (Mock Exam) 40 ข้อ<br>
-            <span style="font-size: 0.9rem; font-weight: 300;">(ใกล้เคียงข้อสอบจริง เพื่อใช้ฝึกทำข้อสอบและทบทวนเนื้อหาก่อนสอบ)</span>
+            แบบทดสอบจำลอง (Mock Exam) 60 ข้อ<br>
+            <span style="font-size: 0.9rem; font-weight: 300;">(สุ่มสลับตัวเลือกอัตโนมัติ เพื่อป้องกันการจำตำแหน่งคำตอบ)</span>
         </button>
         
         <button class="btn-main" onclick="startVocab()">
@@ -124,12 +156,15 @@
     </div>
 
     <div id="page-quiz" class="hidden">
+        <div class="progress-container"><div class="progress-bar" id="quiz-progress"></div></div>
+
         <div class="score-display">
+            <button class="btn-nav" style="padding: 5px 20px; font-size: 1rem; background: var(--card-bg); border: 2px solid var(--pink-btn); color: var(--text-dark);" onclick="navTo('page-home')">🏠 หน้าแรก</button>
             <div>คะแนน: <span id="current-score">0</span> / <span id="total-questions">0</span></div>
-            <button class="btn-nav" style="padding: 5px 20px; font-size: 1rem; background: white; border: 2px solid var(--pink-btn);" onclick="toggleQuestionMenu()">📌 เลือกข้อ</button>
+            <button class="btn-nav" style="padding: 5px 20px; font-size: 1rem; background: var(--card-bg); border: 2px solid var(--pink-btn); color: var(--text-dark);" onclick="toggleQuestionMenu()">📌 เลือกข้อ</button>
         </div>
 
-        <div id="question-menu" class="hidden" style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+        <div id="question-menu" class="hidden" style="background: var(--card-bg); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid var(--pink-card);">
             <h4 style="margin-top:0;">เลือกข้อที่ต้องการทำ</h4>
             <div id="q-grid" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
         </div>
@@ -139,7 +174,7 @@
         <div class="quiz-grid">
             <div>
                 <div id="passage-btn-container" class="hidden" style="margin-bottom: 15px;">
-                    <button class="btn-nav" style="background: #fff0f6; border: 2px solid var(--pink-btn); color: var(--pink-btn-hover); padding: 8px 20px; font-size: 1.1rem; border-radius: 10px; width: 100%; font-weight: bold;" onclick="openPassage()">
+                    <button class="btn-nav" style="background: var(--pink-card); border: 2px solid var(--pink-btn); color: var(--text-dark); padding: 8px 20px; font-size: 1.1rem; border-radius: 10px; width: 100%; font-weight: bold;" onclick="openPassage()">
                         📖 คลิกที่นี่เพื่ออ่านเนื้อเรื่อง (Passage)
                     </button>
                 </div>
@@ -147,16 +182,13 @@
                 <h3 id="question-text" style="line-height: 1.6;"></h3>
                 <ul class="options-list" id="options-list"></ul>
                 
-                <div id="explanation-box" class="hidden mt-2" style="background: white; padding: 15px; border-radius: 10px; border-left: 5px solid var(--pink-btn);">
-                    <strong style="font-size: 1.1rem;">เฉลย:</strong><br><span id="explanation-text" style="display: block; margin-top: 8px; line-height: 1.5;"></span>
+                <div id="explanation-box" class="hidden mt-2" style="background: var(--card-bg); padding: 15px; border-radius: 10px; border-left: 5px solid var(--pink-btn);">
+                    <strong style="font-size: 1.1rem; color: var(--pink-btn-hover);">เฉลย:</strong><br><span id="explanation-text" style="display: block; margin-top: 8px; line-height: 1.5;"></span>
                 </div>
 
                 <div style="display: flex; justify-content: space-between; margin-top: 30px;">
                     <button class="btn-nav" onclick="prevQuestion()">&lt;----- กลับ</button>
                     <button id="btn-next" class="btn-nav" onclick="nextQuestion()">ถัดไป -----&gt;</button>
-                </div>
-                <div class="mt-2 text-center">
-                    <button class="btn-nav" onclick="navTo('page-home')" style="background:#eee; font-size: 1rem; padding: 5px 20px;">กลับหน้าแรก</button>
                 </div>
             </div>
 
@@ -166,7 +198,7 @@
                 <div style="text-align: center;">
                     <button class="btn-hint" onclick="toggleHint()">คำใบ้</button>
                 </div>
-                <div id="hint-box" class="hidden" style="margin-top:15px; background: white; padding: 10px; border-radius: 10px; font-size:0.9rem; text-align: left;"></div>
+                <div id="hint-box" class="hidden" style="margin-top:15px; background: var(--card-bg); padding: 10px; border-radius: 10px; font-size:0.9rem; text-align: left; border: 1px solid var(--pink-btn);"></div>
             </div>
         </div>
     </div>
@@ -182,8 +214,13 @@
     <div id="page-result" class="hidden text-center">
         <div class="card">
             <h1>🎉 ทำข้อสอบเสร็จแล้ว! 🎉</h1>
-            <p style="font-size: 1.5rem; margin: 30px 0;">คุณทำได้: <strong style="color: var(--pink-btn-hover); font-size: 2.5rem;"><span id="final-score">0</span> / <span id="final-total">0</span></strong> คะแนน</p>
-            <button class="btn-main" onclick="navTo('page-home')" style="max-width: 300px;">กลับสู่หน้าแรก</button>
+            <p style="font-size: 1.5rem; margin: 20px 0;">คุณทำได้: <strong style="color: var(--pink-btn-hover); font-size: 2.5rem;"><span id="final-score">0</span> / <span id="final-total">0</span></strong> คะแนน</p>
+            <p id="hs-celebration" style="color: var(--success); font-weight: bold; font-size: 1.2rem; display: none;">🌟 ยินดีด้วย! นี่คือสถิติใหม่ของคุณ 🌟</p>
+            
+            <h3 style="margin-top: 30px; text-align: left; padding-left: 10px;">📊 วิเคราะห์จุดแข็ง-จุดอ่อนของคุณ</h3>
+            <div class="analytics-grid" id="analytics-container"></div>
+
+            <button class="btn-main" onclick="navTo('page-home')" style="max-width: 300px; margin-top: 30px;">กลับสู่หน้าแรก</button>
         </div>
         
         <div class="survey-box">
@@ -194,12 +231,14 @@
     </div>
 
     <div id="page-vocab" class="hidden">
-        
+        <div class="progress-container"><div class="progress-bar" id="vocab-progress"></div></div>
+
         <div class="score-display">
-            <button class="btn-nav" style="padding: 5px 20px; font-size: 1rem; background: white; border: 2px solid var(--pink-btn);" onclick="toggleVocabMenu()">📌 เลือกหน้าคำศัพท์</button>
+            <button class="btn-nav" style="padding: 5px 20px; font-size: 1rem; background: var(--card-bg); border: 2px solid var(--pink-btn); color: var(--text-dark);" onclick="navTo('page-home')">🏠 หน้าแรก</button>
+            <button class="btn-nav" style="padding: 5px 20px; font-size: 1rem; background: var(--card-bg); border: 2px solid var(--pink-btn); color: var(--text-dark);" onclick="toggleVocabMenu()">📌 เลือกหน้าคำศัพท์</button>
         </div>
 
-        <div id="vocab-menu" class="hidden" style="background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+        <div id="vocab-menu" class="hidden" style="background: var(--card-bg); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid var(--pink-card);">
             <h4 style="margin-top:0;">เลือกหน้าคำศัพท์ (1-6)</h4>
             <div id="v-grid" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
         </div>
@@ -215,7 +254,6 @@
         
         <div style="display: flex; justify-content: space-between; margin-top: 40px;">
             <button class="btn-nav" onclick="prevVocabPage()">&lt;----- กลับ</button>
-            <button class="btn-nav" onclick="navTo('page-home')" style="background:#eee; padding: 5px 20px;">หน้าแรก</button>
             <button class="btn-nav" onclick="nextVocabPage()">ถัดไป -----&gt;</button>
         </div>
 
@@ -228,9 +266,71 @@
 </div>
 
 <script>
+    // --- โหมดกลางคืน (Dark Mode) ---
+    function toggleTheme() {
+        const body = document.body;
+        const btn = document.getElementById('theme-btn');
+        body.classList.toggle('dark-mode');
+        if (body.classList.contains('dark-mode')) {
+            btn.innerText = '☀️';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            btn.innerText = '🌙';
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // --- เอฟเฟกต์เสียง (Sound Effects) Web Audio API ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        if (type === 'correct') {
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // โน้ต C5
+            oscillator.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // โน้ต E5
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'incorrect') {
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+            oscillator.frequency.setValueAtTime(100, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+            oscillator.start(audioCtx.currentTime);
+            oscillator.stop(audioCtx.currentTime + 0.3);
+        }
+    }
+
+    // โหลดการตั้งค่าและสถิติตอนเริ่ม
+    window.onload = () => {
+        if (localStorage.getItem('theme') === 'dark') toggleTheme();
+        const hs = localStorage.getItem('mockHighScore');
+        if(hs) {
+            document.getElementById('high-score-display').style.display = 'block';
+            document.getElementById('hs-val').innerText = hs;
+        }
+    };
+
     function navTo(pageId) {
         document.querySelectorAll('.container > div').forEach(el => el.classList.add('hidden'));
         document.getElementById(pageId).classList.remove('hidden');
+        window.scrollTo(0,0);
+    }
+
+    // Update Progress Bar
+    function updateProgressBar(elementId, current, total) {
+        const percentage = ((current) / total) * 100;
+        document.getElementById(elementId).style.width = `${percentage}%`;
     }
 
     const passagesData = {
@@ -239,7 +339,7 @@
     };
 
     function openPassage() {
-        const q = questions[currentQ];
+        const q = runtimeQuestions[currentQ];
         if(q.passage) {
             document.getElementById('passage-title').innerText = 'Reading Passage ' + q.passage;
             document.getElementById('passage-content').innerHTML = passagesData[q.passage];
@@ -251,7 +351,7 @@
     // ตัวแปรสำหรับหลักการคิดเรื่อง If-Clause เพื่อนำไปใช้ซ้ำ
     const logicConditionals = "<b>โครงสร้าง If-Clause (Conditionals)</b><br><ul style='margin-top:5px; padding-left:15px; font-size:0.9rem;'><li><b>Type 0:</b> If + V.1, S + V.1<br>(ความจริงเสมอ/วิทยาศาสตร์)</li><li><b>Type 1:</b> If + V.1, S + will + V.1<br>(เป็นไปได้ในอนาคต)</li><li><b>Type 2:</b> If + V.2, S + would + V.1<br>(สมมติสิ่งที่ไม่จริงในปัจจุบัน)</li><li><b>Type 3:</b> If + had + V.3, S + would have + V.3<br>(สมมติสิ่งตรงข้ามกับอดีต แก้ไขไม่ได้)</li></ul>";
 
-    const questions = [
+    const baseQuestions = [
         { text: "1. Regular exercise is highly _____ because it helps people stay healthy and reduce stress.", options: ["beneficial", "portable", "flexible", "innovative"], answer: 0, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 บริบทคือการออกกำลังกายที่ทำให้สุขภาพดี คำตอบต้องมีความหมายเชิงบวก", explanation: "<b>ตอบข้อ 1. beneficial</b><ul class='expl-list'><li><b>การแปล:</b> การออกกำลังกายเป็นประจำนั้น 'มีประโยชน์' อย่างมาก เพราะช่วยให้สุขภาพดี</li><li><b>วิเคราะห์:</b> คำว่า beneficial (มีประโยชน์) สอดคล้องกับเรื่องสุขภาพที่สุด</li><li><b>ตัวเลือกอื่น:</b> portable (พกพาง่าย), flexible (ยืดหยุ่น), innovative (เป็นนวัตกรรม)</li></ul>" },
         { text: "2. Each group in the design contest presented a/an _____ product that reflected their creativity and original ideas.", options: ["affordable", "portable", "unique", "practical"], answer: 2, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 คีย์เวิร์ดคือ 'creativity' (ความคิดสร้างสรรค์) และ 'original ideas' (ไอเดียที่ไม่เหมือนใคร)", explanation: "<b>ตอบข้อ 3. unique</b><ul class='expl-list'><li><b>คีย์เวิร์ด:</b> creativity (ความคิดสร้างสรรค์) และ original ideas (ไอเดียต้นฉบับ/ไม่ซ้ำใคร)</li><li><b>วิเคราะห์:</b> สินค้าที่สร้างสรรค์และไม่เหมือนใคร ต้องใช้คำว่า 'unique' (มีเอกลักษณ์)</li><li><b>ตัวเลือกอื่น:</b> affordable (ราคาจับต้องได้), portable (พกพาง่าย), practical (ใช้ได้จริง)</li></ul>" },
         { text: "3. After months of planning, they decided to _____ a small business together.", options: ["set up", "turn off", "give up", "take back"], answer: 0, logic: "ข้อนี้ทดสอบ Phrasal Verbs", hint: "💡 การเริ่มต้นทำธุรกิจหรือก่อตั้งบริษัท ใช้ Phrasal Verb ตัวไหน?", explanation: "<b>ตอบข้อ 1. set up</b><ul class='expl-list'><li><b>การแปล:</b> หลังจากวางแผนมาหลายเดือน พวกเขาตัดสินใจ 'ก่อตั้ง' ธุรกิจเล็กๆ ด้วยกัน</li><li><b>วิเคราะห์:</b> สำนวน set up a business แปลว่า ก่อตั้ง/เริ่มต้นธุรกิจ</li><li><b>ตัวเลือกอื่น:</b> turn off (ปิดเครื่องใช้ไฟฟ้า), give up (ยอมแพ้), take back (ถอนคำพูด/เอาคืน)</li></ul>" },
@@ -293,22 +393,61 @@
         { passage: 2, text: "37. What does the word 'ones' in paragraph 2 refer to? <br>(...instead of purchasing new ones)", options: ["the tools and equipment", "the universities", "the sharing programs", "the training videos"], answer: 0, logic: "Reading Comprehension", hint: "💡 ประโยคหน้า 'borrowing equipment and learning how to maintain simple tools instead of purchasing new ones'", explanation: "<b>ตอบข้อ 1. the tools and equipment</b><ul class='expl-list'><li><b>จุดสังเกตในเรื่อง:</b> ประโยคเต็มคือ \"began borrowing equipment and learning how to maintain simple tools instead of purchasing new ones\"</li><li><b>วิเคราะห์:</b> ones เป็นสรรพนามที่ใช้แทนคำนามที่เพิ่งกล่าวไป เพื่อไม่ให้พูดซ้ำ ซึ่งก็คือ tools (เครื่องมือ) และ equipment (อุปกรณ์)</li></ul>" },
         { passage: 2, text: "38. Why were rules introduced for shared facilities?", options: ["to encourage users to buy more equipment", "to make shared spaces more entertaining", "to keep shared items safe and properly used", "to reduce the number of community programs"], answer: 2, logic: "Reading Comprehension", hint: "💡 ทำไมต้องมีกฎ? เพื่อแก้ปัญหาเรื่องของเสียหาย (damaged by careless users)", explanation: "<b>ตอบข้อ 3. to keep shared items safe and properly used</b><ul class='expl-list'><li><b>จุดสังเกตในเรื่อง:</b> ย่อหน้าที่ 3 ระบุว่าคนกังวลเรื่องของจะพังจากผู้ใช้ที่ไม่ระวัง (damaged by careless users) เลยต้องมีกฎ</li><li><b>วิเคราะห์:</b> กฎจึงถูกตั้งขึ้นเพื่อรักษาสิ่งของให้ปลอดภัยและถูกใช้งานอย่างถูกต้อง</li></ul>" },
         { passage: 2, text: "39. What is TRUE according to the passage?", options: ["Shared services make people buy more personal items.", "Some users are worried about damage and overcrowding in shared spaces.", "Manufacturers are only focusing on decorative product designs.", "Shared programs have been rejected by all universities."], answer: 1, logic: "Reading Comprehension", hint: "💡 ลองหาจุดที่พูดเรื่องความกังวล (worried/concerned)", explanation: "<b>ตอบข้อ 2. Some users are worried about damage and overcrowding in shared spaces.</b><ul class='expl-list'><li><b>วิเคราะห์:</b> ในเรื่องระบุตรงตัวในย่อหน้าที่ 3 ว่า \"They worry that shared spaces may become crowded or that borrowed items might be damaged...\" ข้อนี้จึงเป็นความจริงที่สุดตามเนื้อเรื่อง</li></ul>" },
-        { passage: 2, text: "40. According to the passage, what will product designers probably do in the future?", options: ["Design products that are stronger and easier to repair", "Stop offering repair and maintenance services", "Focus only on decorative product features", "Produce more disposable items every year"], answer: 0, logic: "Reading Comprehension", hint: "💡 ในย่อหน้าสุดท้าย พูดถึงนักออกแบบในอนาคตว่า 'need to be more durable and easier to repair'", explanation: "<b>ตอบข้อ 1. Design products that are stronger and easier to repair</b><ul class='expl-list'><li><b>จุดสังเกตในเรื่อง:</b> ในย่อหน้าที่ 4 ระบุว่าสินค้าในอนาคต \"need to be more durable and easier to repair\"</li><li><b>วิเคราะห์:</b> นักออกแบบจึงมีแนวโน้มที่จะออกแบบสินค้าให้แข็งแรงทนทานขึ้น (stronger) และซ่อมแซมง่ายขึ้น (easier to repair)</li></ul>" }
+        { passage: 2, text: "40. According to the passage, what will product designers probably do in the future?", options: ["Design products that are stronger and easier to repair", "Stop offering repair and maintenance services", "Focus only on decorative product features", "Produce more disposable items every year"], answer: 0, logic: "Reading Comprehension", hint: "💡 ในย่อหน้าสุดท้าย พูดถึงนักออกแบบในอนาคตว่า 'need to be more durable and easier to repair'", explanation: "<b>ตอบข้อ 1. Design products that are stronger and easier to repair</b><ul class='expl-list'><li><b>จุดสังเกตในเรื่อง:</b> ในย่อหน้าที่ 4 ระบุว่าสินค้าในอนาคต \"need to be more durable and easier to repair\"</li><li><b>วิเคราะห์:</b> นักออกแบบจึงมีแนวโน้มที่จะออกแบบสินค้าให้แข็งแรงทนทานขึ้น (stronger) และซ่อมแซมง่ายขึ้น (easier to repair)</li></ul>" },
+        { text: "41. Mount Fuji is a famous _________ located in Japan.", options: ["glacier", "volcano", "storm", "jungle"], answer: 1, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 เป็นภูเขาที่มีรูปร่างสวยงามและเคยมีการปะทุ", explanation: "<b>ตอบข้อ 2. volcano</b><ul class='expl-list'><li><b>การแปล:</b> ภูเขาไฟฟูจิเป็น 'ภูเขาไฟ' ที่มีชื่อเสียงตั้งอยู่ในประเทศญี่ปุ่น</li><li><b>วิเคราะห์:</b> บริบทพูดถึงสถานที่ที่มีชื่อเสียงในญี่ปุ่น (Mount Fuji) ซึ่งก็คือภูเขาไฟ</li><li><b>ตัวเลือกอื่น:</b> glacier (ธารน้ำแข็ง), storm (พายุ), jungle (ป่าดงดิบ)</li></ul>" },
+        { text: "42. Someone broke into a house and stole valuable items. This crime is called _________.", options: ["kidnapping", "burglary", "fraud", "shoplifting"], answer: 1, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 การงัดแงะเข้าไปในที่พักอาศัยเพื่อขโมยของ", explanation: "<b>ตอบข้อ 2. burglary</b><ul class='expl-list'><li><b>การแปล:</b> มีคนบุกรุกเข้าไปในบ้านและขโมยของมีค่า อาชญากรรมนี้เรียกว่า 'การงัดแงะ/ย่องเบา'</li><li><b>วิเคราะห์:</b> broke into a house (บุกรุกเข้าบ้าน) ตรงกับความหมายของ burglary</li><li><b>ตัวเลือกอื่น:</b> kidnapping (ลักพาตัว), fraud (ฉ้อโกง), shoplifting (ขโมยของตามร้านค้า)</li></ul>" },
+        { text: "43. Find the best meaning of “get” in the sentence: 'We got home late.'", options: ["arrived", "bought", "received", "became"], answer: 0, logic: "ข้อนี้ทดสอบความหมายของคำว่า 'get' (Vocabulary)", hint: "💡 'got home' ในประโยคนี้ หมายถึงการเดินทางไปถึงที่พัก", explanation: "<b>ตอบข้อ 1. arrived</b><ul class='expl-list'><li><b>การแปล:</b> พวกเรา 'มาถึง' บ้านดึก</li><li><b>วิเคราะห์:</b> get ตามด้วยสถานที่ (เช่น home) จะมีความหมายว่า 'ไปถึง' (arrive)</li><li><b>ตัวเลือกอื่น:</b> bought (ซื้อ), received (ได้รับ), became (กลายเป็น)</li></ul>" },
+        { text: "44. I love the smell of freshly _________ cookies in the kitchen.", options: ["fried", "baked", "roasted", "boiled"], answer: 1, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 คุกกี้มักจะทำด้วยวิธีการนำไปทำให้สุกในเตาอบ", explanation: "<b>ตอบข้อ 2. baked</b><ul class='expl-list'><li><b>การแปล:</b> ฉันชอบกลิ่นของคุกกี้ที่เพิ่ง 'อบ' เสร็จใหม่ๆ ในครัว</li><li><b>วิเคราะห์:</b> การทำคุกกี้และขนมปัง ใช้กรรมวิธีการ 'อบ' (bake)</li><li><b>ตัวเลือกอื่น:</b> fried (ทอด), roasted (ย่าง/อบเนื้อสัตว์), boiled (ต้ม)</li></ul>" },
+        { text: "45. In a modern _________ like “Avatar”, it’s hard to know which scenes are real and which are created digitally.", options: ["musical", "horror", "science fiction", "documentary"], answer: 2, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 ภาพยนตร์ที่มีการสร้างโลกจำลองด้วยคอมพิวเตอร์ เทคโนโลยีล้ำยุค", explanation: "<b>ตอบข้อ 3. science fiction</b><ul class='expl-list'><li><b>การแปล:</b> ในภาพยนตร์ 'ไซไฟ (วิทยาศาสตร์)' สมัยใหม่อย่าง Avatar มันยากที่จะแยกแยะว่าฉากไหนของจริงฉากไหนใช้คอมพิวเตอร์สร้าง</li><li><b>วิเคราะห์:</b> Avatar เป็นตัวแทนของหนังแนววิทยาศาสตร์ล้ำยุค (science fiction หรือ sci-fi)</li><li><b>ตัวเลือกอื่น:</b> musical (หนังเพลง), horror (หนังสยองขวัญ), documentary (สารคดี)</li></ul>" },
+        { text: "46. He tricked elderly people into giving him money by pretending to be a bank officer. This is an example of _________.", options: ["fraud", "arson", "forgery", "robbery"], answer: 0, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 การหลอกลวงต้มตุ๋นผู้อื่นเพื่อเอาเงิน เรียกว่าอะไร?", explanation: "<b>ตอบข้อ 1. fraud</b><ul class='expl-list'><li><b>การแปล:</b> เขาหลอกลวงผู้สูงอายุให้โอนเงินให้โดยแกล้งทำเป็นพนักงานธนาคาร นี่คือตัวอย่างของ 'การฉ้อโกง'</li><li><b>วิเคราะห์:</b> tricked... into giving money (หลอกเอาเงิน) เป็นความหมายของการต้มตุ๋น/ฉ้อโกง (fraud)</li><li><b>ตัวเลือกอื่น:</b> arson (ลอบวางเพลิง), forgery (การปลอมแปลงเอกสาร), robbery (การปล้นทรัพย์)</li></ul>" },
+        { text: "47. A risky and exciting action scene in a movie is usually performed by a professional _________.", options: ["extra", "stuntman", "director", "sequel"], answer: 1, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 ผู้ที่แสดงฉากอันตรายแทนนักแสดงหลักคือใคร?", explanation: "<b>ตอบข้อ 2. stuntman</b><ul class='expl-list'><li><b>การแปล:</b> ฉากแอคชั่นที่เสี่ยงอันตรายและน่าตื่นเต้นในภาพยนตร์มักจะแสดงโดย 'สตันท์แมน' มืออาชีพ</li><li><b>วิเคราะห์:</b> risky action scene บ่งบอกถึงนักแสดงแทนฉากเสี่ยงตาย (stuntman)</li><li><b>ตัวเลือกอื่น:</b> extra (ตัวประกอบ), director (ผู้กำกับ), sequel (ภาคต่อ)</li></ul>" },
+        { text: "48. The chicken had been slowly _________ in the oven for two hours.", options: ["steamed", "boiled", "roasted", "grilled"], answer: 2, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 การทำให้ไก่สุกในเตาอบ (oven) เป็นเวลานาน", explanation: "<b>ตอบข้อ 3. roasted</b><ul class='expl-list'><li><b>การแปล:</b> ไก่ถูก 'ย่าง/อบ' อย่างช้าๆ ในเตาอบเป็นเวลา 2 ชั่วโมง</li><li><b>วิเคราะห์:</b> การอบหรือย่างเนื้อสัตว์ในเตาอบ เราจะใช้คำว่า roast (ถ้าเป็นขนมอบใช้ bake)</li><li><b>ตัวเลือกอื่น:</b> steamed (นึ่ง), boiled (ต้ม), grilled (ย่างบนตะแกรง/เตาถ่าน)</li></ul>" },
+        { text: "49. If all of the world’s _________ melted, the sea level would rise dramatically.", options: ["forests", "coasts", "glaciers", "deserts"], answer: 2, logic: "ข้อนี้ต้องรู้ความหมายของคำศัพท์ (Vocabulary)", hint: "💡 สิ่งใดที่ละลาย (melted) แล้วจะทำให้ระดับน้ำทะเล (sea level) สูงขึ้น?", explanation: "<b>ตอบข้อ 3. glaciers</b><ul class='expl-list'><li><b>การแปล:</b> หาก 'ธารน้ำแข็ง' ทั่วโลกละลาย ระดับน้ำทะเลจะสูงขึ้นอย่างรวดเร็ว</li><li><b>วิเคราะห์:</b> คีย์เวิร์ด melted (ละลาย) และ sea level (ระดับน้ำทะเล) ต้องคู่กับธารน้ำแข็ง (glaciers)</li><li><b>ตัวเลือกอื่น:</b> forests (ป่าไม้), coasts (ชายฝั่ง), deserts (ทะเลทราย)</li></ul>" },
+        { text: "50. Find the best meaning of “get” in the sentence: 'Did you get my email yesterday?'", options: ["arrive", "receive", "buy", "become"], answer: 1, logic: "ข้อนี้ทดสอบความหมายของคำว่า 'get' (Vocabulary)", hint: "💡 การ get อีเมล หมายถึงอะไร?", explanation: "<b>ตอบข้อ 2. receive</b><ul class='expl-list'><li><b>การแปล:</b> คุณ 'ได้รับ' อีเมลของฉันหรือเปล่าเมื่อวานนี้?</li><li><b>วิเคราะห์:</b> get ที่ใช้กับสิ่งของ ข้อความ หรืออีเมล จะมีความหมายว่า 'ได้รับ' (receive)</li><li><b>ตัวเลือกอื่น:</b> arrive (มาถึง), buy (ซื้อ), become (กลายเป็น)</li></ul>" },
+        { text: "51. If he __________ so much time on video games, he would do better in school.", options: ["doesn’t spend", "didn’t spend", "wouldn’t spend", "won’t spend"], answer: 1, logic: logicConditionals, hint: "💡 สังเกตประโยคหลังเป็น 'would do' (would + V.1) แสดงว่าเป็นเงื่อนไขสมมติในปัจจุบัน", explanation: "<b>ตอบข้อ 2. didn’t spend</b><ul class='expl-list'><li><b>วิเคราะห์:</b> ประโยคหลักคือ he would do better... (would + V.1) ตรงกับ If Clause Type 2 สมมติสิ่งตรงข้ามกับปัจจุบัน</li><li><b>โครงสร้าง:</b> If + S + V.2, S + would + V.1</li><li><b>สรุป:</b> V.2 ในรูปปฏิเสธคือ didn't + V.1 จึงตอบ didn't spend</li></ul>" },
+        { text: "52. The letter __________ by the secretary yesterday.", options: ["is written", "was written", "wrote", "will write"], answer: 1, logic: "<b>โครงสร้าง Passive Voice</b><br><ul style='text-align:left;'><li>Present = is/am/are + V.3</li><li>Past = was/were + V.3</li><li>Future = will be + V.3</li></ul>", hint: "💡 คีย์เวิร์ด 'yesterday' และจดหมายเขียนตัวเองไม่ได้", explanation: "<b>ตอบข้อ 2. was written</b><ul class='expl-list'><li><b>วิเคราะห์ Tense:</b> yesterday (เมื่อวาน) เกิดในอดีต (Past Simple)</li><li><b>วิเคราะห์ Voice:</b> The letter (จดหมาย) ถูกกระทำ ต้องใช้ Passive Voice (was/were + V.3)</li><li><b>สรุป:</b> จดหมาย 1 ฉบับ (เอกพจน์) ใช้ was written</li></ul>" },
+        { text: "53. You’d better __________ faster or we’ll miss the train.", options: ["run", "to run", "running", "ran"], answer: 0, logic: "<b>การให้คำแนะนำ (Giving Advice)</b><br>สำนวน <b>had better</b> แปลว่า 'ควรจะ...ดีกว่า'<br>โครงสร้าง: S + had better + <b>V.1 (ไม่ผัน ไม่เติม to)</b>", hint: "💡 กริยาที่ตามหลัง 'had better' ต้องเป็น V.1 เพียวๆ", explanation: "<b>ตอบข้อ 1. run</b><ul class='expl-list'><li><b>การแปล:</b> คุณควรจะ 'วิ่ง' ให้เร็วกว่านี้ ไม่งั้นเราจะตกรถไฟ</li><li><b>วิเคราะห์:</b> โครงสร้าง had better (ตัวย่อ 'd better) บังคับตามด้วย Infinitive without to (V.1 ไม่ผันรูป) จึงต้องตอบ run</li></ul>" },
+        { text: "54. Large corporations earn huge profits. They __________ contribute more to society.", options: ["should", "can", "mustn’t", "don’t have to"], answer: 0, logic: "<b>Modal Verbs (กริยาช่วย)</b><br><ul style='text-align:left;'><li>should = ควรจะ (แนะนำ)</li><li>can = สามารถ</li><li>mustn't = ห้ามทำ</li><li>don't have to = ไม่จำเป็นต้อง</li></ul>", hint: "💡 การแนะนำสิ่งที่เหมาะสมหรือควรทำต่อสังคม ใช้คำว่าอะไร?", explanation: "<b>ตอบข้อ 1. should</b><ul class='expl-list'><li><b>การแปล:</b> บริษัทยักษ์ใหญ่ทำกำไรได้มหาศาล พวกเขา 'ควรจะ' ตอบแทนสังคมให้มากกว่านี้</li><li><b>วิเคราะห์:</b> บริบทเป็นการเสนอแนะสิ่งที่เหมาะสม (Recommendation) จึงต้องใช้ should (ควรจะ)</li></ul>" },
+        { text: "55. You __________ better if you __________ enough sleep.", options: ["feel / would get", "would feel / got", "would feel / would get", "felt / would get"], answer: 1, logic: logicConditionals, hint: "💡 สังเกตว่าเป็นเรื่องสมมติ (ถ้าคุณนอนพอ คุณคงจะรู้สึกดีขึ้น) โครงสร้าง Type 2", explanation: "<b>ตอบข้อ 2. would feel / got</b><ul class='expl-list'><li><b>วิเคราะห์:</b> ประโยคนี้สลับเอา If-clause ไว้ข้างหลัง เป็นการสมมติสิ่งที่ไม่ได้เกิดขึ้นจริงในตอนนี้</li><li><b>โครงสร้าง:</b> Type 2 คือ S + would + V.1 + if + S + V.2</li><li><b>สรุป:</b> ประโยคหน้าใช้ would feel ประโยคหลัง if ใช้ V.2 คือ got</li></ul>" },
+        { text: "56. She spent the whole evening __________ for her presentation.", options: ["prepare", "preparing", "to prepare", "prepared"], answer: 1, logic: "<b>โครงสร้างการใช้เวลา (Spend)</b><br>spend time / money + <b>V.ing</b><br>(ใช้เวลา/เงิน ไปกับการทำบางสิ่ง)", hint: "💡 หลังคำว่า spend (ใช้เวลา) กริยาที่ตามมาต้องอยู่ในรูปใด?", explanation: "<b>ตอบข้อ 2. preparing</b><ul class='expl-list'><li><b>การแปล:</b> เธอใช้เวลาทั้งช่วงเย็น 'ไปกับการเตรียมตัว' สำหรับการนำเสนอ</li><li><b>วิเคราะห์:</b> โครงสร้าง spend time บังคับว่าต้องตามด้วยกริยาเติม -ing เสมอ (spending time doing something)</li></ul>" },
+        { text: "57. Elon: I am not interested in reality shows.<br>Musk: __________! They are a waste of time.", options: ["So do I.", "So am I.", "Neither do I.", "Neither am I."], answer: 3, logic: "<b>การพูดคล้อยตาม (Agreement)</b><br><ul style='text-align:left;'><li>เห็นด้วยกับบอกเล่า: So + กริยาช่วย + S</li><li>เห็นด้วยกับปฏิเสธ: Neither + กริยาช่วย + S</li></ul>", hint: "💡 ประโยคของ Elon เป็นปฏิเสธ (not) และใช้กริยา 'am' ดังนั้นต้องตอบคล้อยตามด้วย Neither", explanation: "<b>ตอบข้อ 4. Neither am I.</b><ul class='expl-list'><li><b>วิเคราะห์ 1:</b> Elon พูดประโยคปฏิเสธ (am not interested) การคล้อยตามต้องใช้ Neither</li><li><b>วิเคราะห์ 2:</b> กริยาช่วยในประโยคแรกคือ Verb to be (am) ประโยคที่ตอบรับก็ต้องใช้ am เช่นกัน จึงตอบ Neither am I. (ฉันก็ไม่อินเหมือนกัน)</li></ul>" },
+        { text: "58. If I __________ more money, I __________ a bigger house.", options: ["have / will buy", "had / would buy", "have / would buy", "had / will buy"], answer: 1, logic: logicConditionals, hint: "💡 เป็นการสมมติในสิ่งที่ไม่ได้เป็นจริงในปัจจุบัน (Type 2)", explanation: "<b>ตอบข้อ 2. had / would buy</b><ul class='expl-list'><li><b>วิเคราะห์:</b> สมมติสิ่งที่เป็นไปไม่ได้ในปัจจุบัน (ความจริงคือไม่มีเงิน เลยไม่ได้ซื้อบ้าน)</li><li><b>โครงสร้าง:</b> If + V.2, S + would + V.1</li><li><b>สรุป:</b> If I had... , I would buy...</li></ul>" },
+        { text: "59. Prayut: I enjoy studying in the morning.<br>Prapassara: __________! I can concentrate much better at that time.", options: ["So do I.", "Neither do I.", "So am I.", "Neither am I."], answer: 0, logic: "<b>การพูดคล้อยตาม (Agreement)</b><br><ul style='text-align:left;'><li>เห็นด้วยกับบอกเล่า: So + กริยาช่วย + S</li><li>เห็นด้วยกับปฏิเสธ: Neither + กริยาช่วย + S</li></ul>", hint: "💡 ประโยคแรกเป็นบอกเล่า (enjoy) และเป็น V.1 ทั่วไป ไม่มีกริยาช่วย ต้องใช้กริยาช่วยตัวไหนมาแทน?", explanation: "<b>ตอบข้อ 1. So do I.</b><ul class='expl-list'><li><b>วิเคราะห์ 1:</b> ประโยคแรกเป็นประโยคบอกเล่า การคล้อยตามต้องใช้ So</li><li><b>วิเคราะห์ 2:</b> กริยาในประโยคคือ enjoy (V.1 ทั่วไป) จึงต้องยืม Verb to do (do) มาช่วย</li><li><b>สรุป:</b> ตอบ So do I. (ฉันก็เหมือนกัน)</li></ul>" },
+        { text: "60. You __________ pay for parking here. It’s free on weekends.", options: ["must", "don’t have to", "should", "can’t"], answer: 1, logic: "<b>Modal Verbs (กริยาช่วย)</b><br><ul style='text-align:left;'><li>must = ต้อง</li><li>don't have to = ไม่จำเป็นต้อง</li><li>should = ควรจะ</li><li>can't = ไม่สามารถ</li></ul>", hint: "💡 ประโยคหลังบอกว่า 'It's free' (ฟรี) แสดงว่าเรื่องการจ่ายเงินเป็นอย่างไร?", explanation: "<b>ตอบข้อ 2. don’t have to</b><ul class='expl-list'><li><b>การแปล:</b> คุณ 'ไม่จำเป็นต้อง' จ่ายค่าจอดรถที่นี่ มันจอดฟรีในวันหยุดสุดสัปดาห์</li><li><b>วิเคราะห์:</b> เมื่อที่จอดรถฟรี หมายความว่า 'ไม่จำเป็นต้องทำ' จึงใช้ don't have to</li></ul>" }
     ];
 
+    let runtimeQuestions = []; // เก็บข้อสอบที่ถูกสุ่มตัวเลือกแล้ว
     let currentQ = 0;
     let score = 0;
 
     function startQuiz() {
         currentQ = 0; score = 0;
-        questions.forEach(q => { q.answered = false; q.selectedOption = null; });
+        
+        // Deep copy from baseQuestions to keep original safe
+        runtimeQuestions = JSON.parse(JSON.stringify(baseQuestions));
+        
+        runtimeQuestions.forEach(q => {
+            q.answered = false;
+            q.selectedOption = null;
+            
+            // Randomize Options (🔀 สุ่มตัวเลือก)
+            let indices = [0, 1, 2, 3];
+            indices.sort(() => Math.random() - 0.5);
+            
+            q.shuffledOptions = indices.map(i => q.options[i]);
+            q.currentAnswerIndex = indices.indexOf(q.answer);
+        });
+
         document.getElementById('question-menu').classList.add('hidden');
-        updateScoreDisplay(); loadQuestion(); navTo('page-quiz');
+        updateScoreDisplay(); 
+        updateProgressBar('quiz-progress', 0, runtimeQuestions.length);
+        loadQuestion(); 
+        navTo('page-quiz');
     }
 
     function updateScoreDisplay() {
         document.getElementById('current-score').innerText = score;
-        document.getElementById('total-questions').innerText = questions.length;
+        document.getElementById('total-questions').innerText = runtimeQuestions.length;
     }
 
     function toggleQuestionMenu() {
@@ -319,11 +458,11 @@
     function renderQuestionMenu() {
         const grid = document.getElementById('q-grid');
         grid.innerHTML = ''; 
-        questions.forEach((q, index) => {
+        runtimeQuestions.forEach((q, index) => {
             let btn = document.createElement('button');
             btn.className = 'q-btn'; btn.innerText = index + 1;
             if (q.answered) {
-                if (q.selectedOption === q.answer) btn.classList.add('answered-correct');
+                if (q.selectedOption === q.currentAnswerIndex) btn.classList.add('answered-correct');
                 else btn.classList.add('answered-incorrect');
             }
             if (index === currentQ) btn.classList.add('active');
@@ -333,11 +472,12 @@
     }
 
     function loadQuestion() {
-        const q = questions[currentQ];
+        const q = runtimeQuestions[currentQ];
         document.getElementById('question-text').innerHTML = q.text;
         document.getElementById('logic-text').innerHTML = q.logic;
         document.getElementById('hint-box').innerHTML = q.hint;
         renderQuestionMenu();
+        updateProgressBar('quiz-progress', runtimeQuestions.filter(x=>x.answered).length, runtimeQuestions.length);
         
         if (q.passage) document.getElementById('passage-btn-container').classList.remove('hidden');
         else document.getElementById('passage-btn-container').classList.add('hidden');
@@ -349,12 +489,12 @@
         optionsList.innerHTML = '';
         optionsList.classList.remove('disabled'); 
         
-        q.options.forEach((opt, index) => {
+        q.shuffledOptions.forEach((opt, index) => {
             let li = document.createElement('li');
             li.innerText = `${index + 1}. ${opt}`;
             if (q.answered) {
                 optionsList.classList.add('disabled');
-                if (index === q.answer) li.classList.add('correct');
+                if (index === q.currentAnswerIndex) li.classList.add('correct');
                 else if (index === q.selectedOption) li.classList.add('incorrect');
                 document.getElementById('explanation-text').innerHTML = q.explanation;
                 document.getElementById('explanation-box').classList.remove('hidden');
@@ -365,7 +505,7 @@
         });
 
         const nextBtn = document.getElementById('btn-next');
-        if (currentQ === questions.length - 1) {
+        if (currentQ === runtimeQuestions.length - 1) {
             nextBtn.innerText = "ส่งข้อสอบ";
             nextBtn.classList.add('submit');
         } else {
@@ -375,51 +515,96 @@
     }
 
     function selectAnswer(index, liElement) {
-        const q = questions[currentQ];
-        q.answered = true; q.selectedOption = index;
+        const q = runtimeQuestions[currentQ];
+        q.answered = true; 
+        q.selectedOption = index;
         document.getElementById('options-list').classList.add('disabled');
 
-        if (index === q.answer) {
-            liElement.classList.add('correct'); score++; updateScoreDisplay();
+        if (index === q.currentAnswerIndex) {
+            liElement.classList.add('correct'); 
+            score++; 
+            updateScoreDisplay();
+            playSound('correct');
         } else {
             liElement.classList.add('incorrect');
-            document.getElementById('options-list').querySelectorAll('li')[q.answer].classList.add('correct');
+            document.getElementById('options-list').querySelectorAll('li')[q.currentAnswerIndex].classList.add('correct');
+            playSound('incorrect');
         }
         document.getElementById('explanation-text').innerHTML = q.explanation;
         document.getElementById('explanation-box').classList.remove('hidden');
         renderQuestionMenu();
+        updateProgressBar('quiz-progress', runtimeQuestions.filter(x=>x.answered).length, runtimeQuestions.length);
     }
 
     function toggleHint() { document.getElementById('hint-box').classList.toggle('hidden'); }
 
     function nextQuestion() {
-        if (currentQ < questions.length - 1) { currentQ++; loadQuestion(); }
+        if (currentQ < runtimeQuestions.length - 1) { currentQ++; loadQuestion(); }
         else submitQuiz();
     }
 
     function prevQuestion() { if (currentQ > 0) { currentQ--; loadQuestion(); } }
 
     function submitQuiz() {
-        const unansweredCount = questions.filter(q => !q.answered).length;
+        const unansweredCount = runtimeQuestions.filter(q => !q.answered).length;
         
         if (unansweredCount > 0) {
             const confirmSubmit = confirm(`⚠️ คุณยังทำข้อสอบไม่ครบจำนวน ${unansweredCount} ข้อ\n\nคุณต้องการ "ยืนยันส่งข้อสอบ" เลยหรือไม่?\n(กด OK เพื่อส่งข้อสอบ / กด Cancel เพื่อทำต่อ)`);
             
             if (!confirmSubmit) {
-                const firstUnansweredIndex = questions.findIndex(q => !q.answered);
+                const firstUnansweredIndex = runtimeQuestions.findIndex(q => !q.answered);
                 currentQ = firstUnansweredIndex;
                 loadQuestion();
                 return; 
             }
         }
         
+        // 🏆 บันทึกสถิติ (High Score)
+        let savedHs = parseInt(localStorage.getItem('mockHighScore')) || 0;
+        if(score > savedHs) {
+            localStorage.setItem('mockHighScore', score);
+            document.getElementById('hs-celebration').style.display = 'block';
+            document.getElementById('hs-val').innerText = score;
+            document.getElementById('high-score-display').style.display = 'block';
+        } else {
+            document.getElementById('hs-celebration').style.display = 'none';
+        }
+
+        // 📊 วิเคราะห์คะแนนแยกหมวด (Score Analytics)
+        let stats = { Vocabulary: {c:0, t:0}, Grammar: {c:0, t:0}, Reading: {c:0, t:0}, Conversation: {c:0, t:0} };
+        
+        runtimeQuestions.forEach(q => {
+            let cat = 'Grammar'; 
+            let logText = (q.logic || "").toLowerCase();
+            
+            if (logText.includes('vocab') || logText.includes('คำศัพท์')) cat = 'Vocabulary';
+            else if (logText.includes('read') || logText.includes('passage')) cat = 'Reading';
+            else if (logText.includes('convers') || logText.includes('สนทนา')) cat = 'Conversation';
+            else cat = 'Grammar';
+            
+            stats[cat].t++;
+            if(q.selectedOption === q.currentAnswerIndex) stats[cat].c++;
+        });
+
+        const container = document.getElementById('analytics-container');
+        container.innerHTML = '';
+        Object.keys(stats).forEach(cat => {
+            let percent = stats[cat].t > 0 ? Math.round((stats[cat].c / stats[cat].t)*100) : 0;
+            let div = document.createElement('div');
+            div.className = 'stat-box';
+            div.innerHTML = `<div class="stat-title">${cat}</div>
+                             <div style="font-size: 1.5rem; font-weight: bold;">${stats[cat].c} / ${stats[cat].t}</div>
+                             <div style="font-size: 0.9rem; color: #888;">ความแม่นยำ: ${percent}%</div>`;
+            container.appendChild(div);
+        });
+
         document.getElementById('final-score').innerText = score;
-        document.getElementById('final-total').innerText = questions.length;
+        document.getElementById('final-total').innerText = runtimeQuestions.length;
         navTo('page-result');
     }
 
     // ==========================================
-    // ส่วนระบบคำศัพท์ (Vocab Logic) - 30 คำ (หน้าละ 5 ข้อ)
+    // ส่วนระบบคำศัพท์ (Vocab Logic) - 30 คำ
     // ==========================================
     const vocabData = [
         { word: "decisive", meaning: "เด็ดขาด, ตัดสินใจเก่ง" },
@@ -457,13 +642,14 @@
     const vocabPerPage = 5;
     let currentVocabPage = 0;
     let matchedVocab = new Set(); 
-    let selectedVocabItem = null; // เก็บคำที่ถูกแตะเลือกไว้
+    let selectedVocabItem = null;
 
     function startVocab() {
         currentVocabPage = 0;
         matchedVocab.clear();
         selectedVocabItem = null;
         document.getElementById('vocab-menu').classList.add('hidden');
+        updateProgressBar('vocab-progress', 0, vocabData.length);
         loadVocabPage();
         navTo('page-vocab');
     }
@@ -496,15 +682,16 @@
     }
 
     function loadVocabPage() {
-        selectedVocabItem = null; // เคลียร์ของเก่าทุกครั้งที่เปลี่ยนหน้า
+        selectedVocabItem = null;
         const start = currentVocabPage * vocabPerPage;
         const pageData = vocabData.slice(start, start + vocabPerPage);
+
+        updateProgressBar('vocab-progress', matchedVocab.size, vocabData.length);
 
         const meaningsContainer = document.getElementById('meanings-container');
         const vocabContainer = document.getElementById('vocab-container');
         meaningsContainer.innerHTML = ''; vocabContainer.innerHTML = '';
 
-        // สุ่มความหมาย
         let shuffledMeanings = [...pageData].sort(() => Math.random() - 0.5);
 
         shuffledMeanings.forEach((item, index) => {
@@ -513,7 +700,6 @@
                 div.className = 'draggable-item'; div.draggable = true;
                 div.innerText = item.meaning; div.id = `drag-${start}-${index}`; div.dataset.word = item.word;
                 
-                // รองรับทั้งลากและคลิก
                 div.addEventListener('dragstart', dragStart);
                 div.addEventListener('click', handleVocabItemClick);
                 
@@ -521,7 +707,6 @@
             }
         });
 
-        // สุ่มคำศัพท์ (Drop Zone)
         let shuffledWords = [...pageData].sort(() => Math.random() - 0.5);
         
         shuffledWords.forEach((item) => {
@@ -547,13 +732,13 @@
                 dropZone.addEventListener('dragover', dragOver);
                 dropZone.addEventListener('dragleave', dragLeave);
                 dropZone.addEventListener('drop', dropVocab);
-                dropZone.addEventListener('click', handleDropZoneClick); // เพิ่มการแตะช่องว่าง
+                dropZone.addEventListener('click', handleDropZoneClick); 
             }
             wrapper.appendChild(wordLabel); wrapper.appendChild(dropZone); vocabContainer.appendChild(wrapper);
         });
 
         const totalPages = Math.ceil(vocabData.length / vocabPerPage);
-        if (currentVocabPage === totalPages - 1) {
+        if (currentVocabPage === totalPages - 1 && matchedVocab.size === vocabData.length) {
             document.getElementById('vocab-survey').classList.remove('hidden');
         } else {
             document.getElementById('vocab-survey').classList.add('hidden');
@@ -562,11 +747,9 @@
         renderVocabMenu();
     }
 
-    // --- ระบบแตะเลือก (Tap to Match) ---
     function handleVocabItemClick(e) {
         const item = e.target;
         if (selectedVocabItem === item) {
-            // แตะซ้ำเพื่อยกเลิกการเลือก
             item.classList.remove('selected-item');
             selectedVocabItem = null;
         } else {
@@ -577,14 +760,13 @@
     }
 
     function handleDropZoneClick(e) {
-        if (!selectedVocabItem) return; // ถ้าไม่ได้เลือกคำไหนไว้ ให้ข้ามไป
+        if (!selectedVocabItem) return;
         const dropzone = e.target.closest('.drop-zone');
-        if (!dropzone || dropzone.children.length > 0) return; // ถ้าไม่ใช่โซนดรอป หรือมีของอยู่แล้ว
+        if (!dropzone || dropzone.children.length > 0) return; 
 
         checkVocabMatch(selectedVocabItem, dropzone);
     }
 
-    // --- ระบบลากวาง (Drag and Drop) ---
     function dragStart(e) { 
         e.dataTransfer.setData('text/plain', e.target.id);
         if (selectedVocabItem) selectedVocabItem.classList.remove('selected-item');
@@ -606,13 +788,13 @@
         }
     }
 
-    // --- ฟังก์ชันตรวจคำตอบ (ใช้ร่วมกันทั้งลากและแตะ) ---
     function checkVocabMatch(dragElement, dropzone) {
         const matchWord = dropzone.dataset.matchWord;
         const dragWord = dragElement.dataset.word;
 
         if (matchWord === dragWord) {
-            // ถูก
+            // ตอบถูก 🎵 เอฟเฟกต์เสียง
+            playSound('correct');
             dropzone.appendChild(dragElement);
             dragElement.classList.remove('selected-item');
             dragElement.style.background = 'var(--success)';
@@ -625,9 +807,18 @@
 
             matchedVocab.add(matchWord);
             selectedVocabItem = null;
-            renderVocabMenu();
+            updateProgressBar('vocab-progress', matchedVocab.size, vocabData.length);
+            
+            const start = currentVocabPage * vocabPerPage;
+            const pageData = vocabData.slice(start, start + vocabPerPage);
+            if (pageData.every(v => matchedVocab.has(v.word))) {
+                setTimeout(nextVocabPage, 600); // ดีเลย์เล็กน้อยถ้าจบหน้านั้นแล้วเด้งไปหน้าถัดไป
+            } else {
+                renderVocabMenu();
+            }
         } else {
-            // ผิด
+            // ตอบผิด 🎵 เอฟเฟกต์เสียง
+            playSound('incorrect');
             dragElement.classList.remove('selected-item');
             dragElement.style.background = 'var(--danger)';
             dragElement.style.color = 'white';
@@ -638,7 +829,7 @@
             setTimeout(() => dragElement.style.transform = 'translateX(0)', 300);
 
             setTimeout(() => {
-                dragElement.style.background = 'white';
+                dragElement.style.background = 'var(--card-bg)';
                 dragElement.style.color = 'var(--text-dark)';
             }, 800);
             selectedVocabItem = null;
@@ -648,6 +839,7 @@
     function nextVocabPage() {
         const totalPages = Math.ceil(vocabData.length / vocabPerPage);
         if (currentVocabPage < totalPages - 1) { currentVocabPage++; loadVocabPage(); }
+        else if (matchedVocab.size === vocabData.length) loadVocabPage(); // เพื่ออัปเดต survey box ตอนจบ
     }
     function prevVocabPage() {
         if (currentVocabPage > 0) { currentVocabPage--; loadVocabPage(); }
